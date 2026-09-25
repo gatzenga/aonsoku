@@ -1,7 +1,7 @@
-import { stat } from 'node:fs/promises'
+import { readFile, stat } from 'node:fs/promises'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import path from 'node:path'
-import { sendFile, sendJson } from './http.ts'
+import { sendBuffer, sendFile, sendJson } from './http.ts'
 
 const contentTypes: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -26,7 +26,6 @@ const contentTypes: Record<string, string> = {
 }
 
 function cacheControlFor(relativePath: string) {
-  if (relativePath === 'index.html') return 'no-cache'
   // Vite puts a content hash into every file name below assets/
   if (relativePath.startsWith('assets/')) {
     return 'public, max-age=31536000, immutable'
@@ -44,9 +43,39 @@ async function fileSize(filePath: string) {
   }
 }
 
-export function createStaticHandler(distDir: string) {
+const configScriptTag = '<script src="./env-config.js"></script>'
+
+// The config is written into the page itself instead of loading
+// /env-config.js: reverse proxies often cache every .js file for a while
+// (ignoring no-store), which kept browsers on an old config
+function inlineConfig(html: string, configScript: string) {
+  const safeScript = configScript.replace(/</g, '\\u003c')
+
+  return html.replace(configScriptTag, `<script>${safeScript}</script>`)
+}
+
+export function createStaticHandler(distDir: string, configScript: string) {
   const root = path.resolve(distDir)
   const indexFile = path.join(root, 'index.html')
+
+  async function sendIndex(req: IncomingMessage, res: ServerResponse) {
+    let html: string
+
+    try {
+      html = await readFile(indexFile, 'utf8')
+    } catch {
+      sendJson(res, 500, { error: 'frontend build is missing' })
+      return
+    }
+
+    res.setHeader('cache-control', 'no-store')
+    sendBuffer(
+      req,
+      res,
+      Buffer.from(inlineConfig(html, configScript)),
+      contentTypes['.html'],
+    )
+  }
 
   return async function handleStatic(
     req: IncomingMessage,
@@ -63,6 +92,11 @@ export function createStaticHandler(distDir: string) {
 
     if (isInsideRoot) {
       const size = await fileSize(requested)
+
+      if (size !== null && requested === indexFile) {
+        await sendIndex(req, res)
+        return
+      }
 
       if (size !== null) {
         const relativePath = path
@@ -88,17 +122,6 @@ export function createStaticHandler(distDir: string) {
       return
     }
 
-    const indexSize = await fileSize(indexFile)
-    if (indexSize === null) {
-      sendJson(res, 500, { error: 'frontend build is missing' })
-      return
-    }
-
-    await sendFile(req, res, {
-      path: indexFile,
-      size: indexSize,
-      contentType: contentTypes['.html'],
-      cacheControl: cacheControlFor('index.html'),
-    })
+    await sendIndex(req, res)
   }
 }

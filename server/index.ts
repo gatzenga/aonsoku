@@ -39,10 +39,10 @@ if (isCacheEnabled) {
 const handleSubsonic = createSubsonicHandler(config, cache)
 const handleLyrics = createLyricsHandler(config, cache)
 const handleRadio = createRadioHandler(config)
-const handleStatic = createStaticHandler(config.distDir)
 
-// Loaded by index.html before the app, so the config is there on first render
+// Written into index.html (see static.ts), /env-config.js remains for the Vite dev server
 const envConfigScript = `window.APP_CONFIG = ${JSON.stringify(config.client)};\n`
+const handleStatic = createStaticHandler(config.distDir, envConfigScript)
 
 function setSecurityHeaders(res: ServerResponse) {
   res.setHeader('x-content-type-options', 'nosniff')
