@@ -1,5 +1,4 @@
 import { OptionsButtons } from '@/app/components/options/buttons'
-import { DownloadOptionHandler } from '@/app/components/options/download-handler'
 import { AddToPlaylistSubMenu } from '@/app/components/song/add-to-playlist'
 import {
   DropdownMenuGroup,
@@ -18,7 +17,7 @@ export function AlbumOptions({ album }: AlbumOptionsProps) {
   const {
     playNext,
     playLast,
-    startDownload,
+    startInstantMix,
     addToPlaylist,
     createNewPlaylist,
   } = useOptions()
@@ -29,10 +28,6 @@ export function AlbumOptions({ album }: AlbumOptionsProps) {
 
   function handlePlayLast() {
     playLast(album.song)
-  }
-
-  function handleDownload() {
-    startDownload(album.id)
   }
 
   function handleAddToPlaylist(id: string) {
@@ -52,6 +47,9 @@ export function AlbumOptions({ album }: AlbumOptionsProps) {
       <DropdownMenuGroup>
         <OptionsButtons.PlayNext onClick={handlePlayNext} />
         <OptionsButtons.PlayLast onClick={handlePlayLast} />
+        <OptionsButtons.InstantMix
+          onClick={() => startInstantMix('album', album.id)}
+        />
       </DropdownMenuGroup>
       {!hidePlaylistsSection && (
         <>
@@ -65,9 +63,6 @@ export function AlbumOptions({ album }: AlbumOptionsProps) {
           </OptionsButtons.AddToPlaylistOption>
         </>
       )}
-      <DownloadOptionHandler>
-        <OptionsButtons.Download onClick={handleDownload} />
-      </DownloadOptionHandler>
     </>
   )
 }

@@ -3,65 +3,20 @@ import {
   RefObject,
   useCallback,
   useEffect,
-  useMemo,
-  useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { useAudioContext } from '@/app/hooks/use-audio-context'
-import {
-  usePlayerActions,
-  usePlayerIsPlaying,
-  usePlayerMediaType,
-  usePlayerVolume,
-  useReplayGainActions,
-  useReplayGainState,
-} from '@/store/player.store'
+import { usePlayerIsPlaying, usePlayerMediaType } from '@/store/player.store'
 import { logger } from '@/utils/logger'
-import { calculateReplayGain, ReplayGainParams } from '@/utils/replayGain'
 
 type AudioPlayerProps = ComponentPropsWithoutRef<'audio'> & {
   audioRef: RefObject<HTMLAudioElement>
-  replayGain?: ReplayGainParams
 }
 
-export function AudioPlayer({
-  audioRef,
-  replayGain,
-  ...props
-}: AudioPlayerProps) {
+export function AudioPlayer({ audioRef, ...props }: AudioPlayerProps) {
   const { t } = useTranslation()
-  const [previousGain, setPreviousGain] = useState(1)
-  const { replayGainEnabled, replayGainError } = useReplayGainState()
-  const { isSong, isRadio, isPodcast } = usePlayerMediaType()
-  const { setPlayingState } = usePlayerActions()
-  const { setReplayGainEnabled, setReplayGainError } = useReplayGainActions()
-  const { volume } = usePlayerVolume()
+  const { isSong } = usePlayerMediaType()
   const isPlaying = usePlayerIsPlaying()
-
-  const gainValue = useMemo(() => {
-    const audioVolume = volume / 100
-
-    if (!replayGain || !replayGainEnabled) {
-      return audioVolume * 1
-    }
-    const gain = calculateReplayGain(replayGain)
-
-    return audioVolume * gain
-  }, [replayGain, replayGainEnabled, volume])
-
-  const { resumeContext, setupGain } = useAudioContext(audioRef.current)
-
-  const ignoreGain = !isSong || replayGainError
-
-  useEffect(() => {
-    if (ignoreGain || !audioRef.current) return
-
-    if (gainValue === previousGain) return
-
-    setupGain(gainValue, replayGain)
-    setPreviousGain(gainValue)
-  }, [audioRef, ignoreGain, gainValue, previousGain, replayGain, setupGain])
 
   const handleSongError = useCallback(() => {
     const audio = audioRef.current
@@ -75,28 +30,7 @@ export function AudioPlayer({
     })
 
     toast.error(t('warnings.songError'))
-
-    if (replayGainEnabled || !replayGainError) {
-      setReplayGainEnabled(false)
-      setReplayGainError(true)
-      window.location.reload()
-    }
-  }, [
-    audioRef,
-    replayGainEnabled,
-    replayGainError,
-    setReplayGainEnabled,
-    setReplayGainError,
-    t,
-  ])
-
-  const handleRadioError = useCallback(() => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    toast.error(t('radios.error'))
-    setPlayingState(false)
-  }, [audioRef, setPlayingState, t])
+  }, [audioRef, t])
 
   useEffect(() => {
     async function handleSong() {
@@ -105,7 +39,6 @@ export function AudioPlayer({
 
       try {
         if (isPlaying) {
-          if (isSong) await resumeContext()
           await audio.play()
         } else {
           audio.pause()
@@ -115,43 +48,8 @@ export function AudioPlayer({
         handleSongError()
       }
     }
-    if (isSong || isPodcast) handleSong()
-  }, [audioRef, handleSongError, isPlaying, isSong, isPodcast, resumeContext])
+    if (isSong) handleSong()
+  }, [audioRef, handleSongError, isPlaying, isSong])
 
-  useEffect(() => {
-    async function handleRadio() {
-      const audio = audioRef.current
-      if (!audio) return
-
-      if (isPlaying) {
-        audio.load()
-        await audio.play()
-      } else {
-        audio.pause()
-      }
-    }
-    if (isRadio) handleRadio()
-  }, [audioRef, isPlaying, isRadio])
-
-  const handleError = useMemo(() => {
-    if (isSong) return handleSongError
-    if (isRadio) return handleRadioError
-
-    return undefined
-  }, [handleRadioError, handleSongError, isRadio, isSong])
-
-  const crossOrigin = useMemo(() => {
-    if (!isSong || replayGainError) return undefined
-
-    return 'anonymous'
-  }, [isSong, replayGainError])
-
-  return (
-    <audio
-      ref={audioRef}
-      {...props}
-      crossOrigin={crossOrigin}
-      onError={handleError}
-    />
-  )
+  return <audio ref={audioRef} {...props} onError={handleSongError} />
 }

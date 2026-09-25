@@ -1,8 +1,10 @@
-import { httpClient } from '@/api/httpClient'
+import { getBackendUrl, httpClient } from '@/api/httpClient'
 import {
   CreateRadio,
   Radio,
+  RadioNowPlaying,
   RadioStationsResponse,
+  RadioStreamKind,
 } from '@/types/responses/radios'
 import { SubsonicResponse } from '@/types/responses/subsonicResponse'
 
@@ -17,7 +19,7 @@ async function getAll() {
   return response?.data.internetRadioStations.internetRadioStation || []
 }
 
-async function create({ name, streamUrl, homePageUrl }: CreateRadio) {
+async function create({ name, streamUrl, homePageUrl = '' }: CreateRadio) {
   await httpClient<SubsonicResponse>('/createInternetRadioStation', {
     method: 'POST',
     query: {
@@ -49,9 +51,34 @@ async function remove(id: string) {
   })
 }
 
+function getStreamUrl(id: string) {
+  return getBackendUrl('/api/radio/stream', { id })
+}
+
+async function getStreamKind(id: string): Promise<RadioStreamKind> {
+  const response = await fetch(getBackendUrl('/api/radio/probe', { id }))
+  if (!response.ok) return 'direct'
+
+  const { kind } = (await response.json()) as { kind: RadioStreamKind }
+  return kind
+}
+
+async function getNowPlaying(id: string, signal: AbortSignal) {
+  const response = await fetch(getBackendUrl('/api/radio/nowplaying', { id }), {
+    signal,
+    cache: 'no-store',
+  })
+  if (!response.ok) return null
+
+  return (await response.json()) as RadioNowPlaying
+}
+
 export const radios = {
   getAll,
   create,
   update,
   remove,
+  getStreamUrl,
+  getStreamKind,
+  getNowPlaying,
 }

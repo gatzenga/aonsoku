@@ -1,7 +1,6 @@
 import { Settings2 } from 'lucide-react'
 import { ComponentPropsWithoutRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@/app/components/ui/badge'
 import { Button } from '@/app/components/ui/button'
 import {
   DropdownMenu,
@@ -52,19 +51,16 @@ export function MainViewTypeSelector({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
-          checked={viewType === 'table'}
-          onCheckedChange={() => setViewType('table')}
-        >
-          <span>{t('generic.viewMode.modes.list')}</span>
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
           checked={viewType === 'grid'}
           onCheckedChange={() => setViewType('grid')}
         >
           <span>{t('generic.viewMode.modes.poster')}</span>
-          <Badge className="ml-2" variant="beta">
-            {t('generic.beta')}
-          </Badge>
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={viewType === 'table'}
+          onCheckedChange={() => setViewType('table')}
+        >
+          <span>{t('generic.viewMode.modes.list')}</span>
         </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>

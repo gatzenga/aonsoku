@@ -1,25 +1,39 @@
-# Build stage
+# Build stage: frontend
 FROM node:24-alpine AS build
 
 WORKDIR /app
 
 RUN corepack enable
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN corepack install
 ENV PNPM_CONFIG_IGNORE_SCRIPTS=true
 RUN pnpm install --ignore-scripts
 COPY . .
 RUN pnpm run build
 
-# Final stage
-FROM nginx:alpine
+# Final stage: one Node.js process serves the frontend and runs the backend.
+# The backend has no dependencies, Node.js runs the TypeScript files directly.
+FROM node:24-alpine
 
-COPY --chown=nginx:nginx --from=build /app/dist /usr/share/nginx/html
-COPY env-config.js.template /usr/share/nginx/html/env-config.js.template
-COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+RUN apk add --no-cache su-exec
 
-COPY set-variables.sh /docker-entrypoint.d/99-set-variables.sh
-RUN chmod +x /docker-entrypoint.d/99-set-variables.sh
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    PORT=8080 \
+    DIST_DIR=/app/dist \
+    CACHE_DIR=/cache
+
+COPY --from=build /app/dist ./dist
+COPY server ./server
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && mkdir -p /cache
 
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+VOLUME ["/cache"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/api/health" > /dev/null || exit 1
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["node", "server/index.ts"]

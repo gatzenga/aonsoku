@@ -1,14 +1,12 @@
 import omit from 'lodash/omit'
 import {
-  CheckIcon,
-  DownloadIcon,
   Info,
   ListEnd,
   ListPlus,
   Pencil,
   PlayIcon,
   PlusIcon,
-  PodcastIcon,
+  SparklesIcon,
   Trash,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -62,14 +60,14 @@ function PlayLast({ variant = 'dropdown', ...props }: DropdownMenuItemProps) {
   )
 }
 
-function Download({ variant = 'dropdown', ...props }: DropdownMenuItemProps) {
+function InstantMix({ variant = 'dropdown', ...props }: DropdownMenuItemProps) {
   const { t } = useTranslation()
 
   return (
     <MenuItemFactory
       variant={variant}
-      icon={<DownloadIcon className="mr-2 h-4 w-4" />}
-      label={t('options.download')}
+      icon={<SparklesIcon className="mr-2 h-4 w-4" />}
+      label={t('options.instantMix')}
       {...props}
     />
   )
@@ -156,55 +154,14 @@ function SongInfo({ variant = 'dropdown', ...props }: DropdownMenuItemProps) {
   )
 }
 
-function MarkAsPlayed({
-  variant = 'dropdown',
-  ...props
-}: DropdownMenuItemProps) {
-  const { t } = useTranslation()
-
-  return (
-    <MenuItemFactory
-      variant={variant}
-      icon={<CheckIcon className="mr-2 h-4 w-4" />}
-      label={t('options.markAsPlayed')}
-      {...props}
-    />
-  )
-}
-
-type GotoPodcastProps = DropdownMenuItemProps & {
-  type: 'podcast' | 'episode'
-}
-
-function GotoPodcast({
-  variant = 'dropdown',
-  type = 'podcast',
-  ...props
-}: GotoPodcastProps) {
-  const { t } = useTranslation()
-
-  const label = t(`options.goto.${type}`)
-
-  return (
-    <MenuItemFactory
-      variant={variant}
-      icon={<PodcastIcon className="mr-2 h-4 w-4" />}
-      label={label}
-      {...props}
-    />
-  )
-}
-
 export const OptionsButtons = {
   Play,
   PlayNext,
   PlayLast,
-  Download,
+  InstantMix,
   AddToPlaylistOption,
   EditPlaylist,
   RemovePlaylist,
   RemoveFromPlaylist,
   SongInfo,
-  MarkAsPlayed,
-  GotoPodcast,
 }

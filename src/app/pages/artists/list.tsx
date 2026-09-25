@@ -1,8 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ShadowHeader } from '@/app/components/album/shadow-header'
 import { ArtistGridCard } from '@/app/components/artist/artist-grid-card'
+import {
+  ArtistsFilters,
+  filterAndSortArtists,
+  useArtistsFilters,
+} from '@/app/components/artist/list-filters'
 import { ArtistsFallback } from '@/app/components/fallbacks/artists.tsx'
 import { GridViewWrapper } from '@/app/components/grid-view-wrapper'
 import { HeaderTitle } from '@/app/components/header-title'
@@ -35,8 +40,9 @@ export default function ArtistsList() {
   } = useAppArtistsViewType()
 
   const columns = artistsColumns()
+  const filters = useArtistsFilters()
 
-  const { data: artists, isLoading } = useQuery({
+  const { data: allArtists, isLoading } = useQuery({
     queryKey: [queryKeys.artist.all],
     queryFn: subsonic.artists.getAll,
   })
@@ -52,6 +58,15 @@ export default function ArtistsList() {
       })
   }
 
+  const { sortBy, order, query } = filters
+  const artists = useMemo(
+    () =>
+      allArtists
+        ? filterAndSortArtists(allArtists, { sortBy, order, query })
+        : undefined,
+    [allArtists, sortBy, order, query],
+  )
+
   if (isLoading) return <ArtistsFallback />
   if (!artists) return null
 
@@ -60,10 +75,13 @@ export default function ArtistsList() {
       <MemoShadowHeader className="flex justify-between">
         <MemoHeaderTitle title={t('sidebar.artists')} count={artists.length} />
 
-        <MemoViewTypeSelector
-          viewType={artistsPageViewType}
-          setViewType={setArtistsPageViewType}
-        />
+        <div className="flex gap-2 items-center">
+          <ArtistsFilters filters={filters} />
+          <MemoViewTypeSelector
+            viewType={artistsPageViewType}
+            setViewType={setArtistsPageViewType}
+          />
+        </div>
       </MemoShadowHeader>
 
       {isTableView && (
@@ -72,7 +90,7 @@ export default function ArtistsList() {
             columns={columns}
             data={artists}
             showPagination={true}
-            showSearch={true}
+            showSearch={false}
             searchColumn="name"
             handlePlaySong={(row) => handlePlayArtistRadio(row.original)}
             allowRowSelection={false}

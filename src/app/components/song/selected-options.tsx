@@ -1,7 +1,6 @@
 import { Table } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { OptionsButtons } from '@/app/components/options/buttons'
-import { DownloadOptionHandler } from '@/app/components/options/download-handler'
 import {
   ContextMenuItem,
   ContextMenuSeparator,
@@ -36,12 +35,6 @@ export function SelectedSongsMenuOptions({ table }: SelectedSongsProps) {
 
   async function handlePlayLast() {
     reset(() => songOptions.playLast(songs))
-  }
-
-  async function handleDownload() {
-    if (!isSingleSelected) return
-
-    reset(() => songOptions.startDownload(firstSong.id))
   }
 
   async function handleAddToPlaylist(id: string) {
@@ -84,6 +77,15 @@ export function SelectedSongsMenuOptions({ table }: SelectedSongsProps) {
           handlePlayLast()
         }}
       />
+      {isSingleSelected && (
+        <OptionsButtons.InstantMix
+          variant="context"
+          onClick={(e) => {
+            e.stopPropagation()
+            reset(() => songOptions.startInstantMix('song', firstSong.id))
+          }}
+        />
+      )}
       {!hidePlaylistsSection && (
         <>
           <ContextMenuSeparator />
@@ -107,15 +109,6 @@ export function SelectedSongsMenuOptions({ table }: SelectedSongsProps) {
       )}
       {isSingleSelected && (
         <>
-          <DownloadOptionHandler context={true}>
-            <OptionsButtons.Download
-              variant="context"
-              onClick={(e) => {
-                e.stopPropagation()
-                handleDownload()
-              }}
-            />
-          </DownloadOptionHandler>
           <ContextMenuSeparator />
           <OptionsButtons.SongInfo
             variant="context"

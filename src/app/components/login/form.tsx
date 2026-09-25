@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import clsx from 'clsx'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -10,7 +9,6 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { queryServerInfo } from '@/api/queryServerInfo'
-import { LangToggle } from '@/app/components/login/lang-toggle'
 import { Button } from '@/app/components/ui/button'
 import {
   Card,
@@ -30,7 +28,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,42 +36,29 @@ import {
 import { Input } from '@/app/components/ui/input'
 import { Password } from '@/app/components/ui/password'
 import { ROUTES } from '@/routes/routesList'
-import { useAppActions, useAppData } from '@/store/app.store'
-import { isDesktop } from '@/utils/desktop'
-import { removeSlashFromUrl } from '@/utils/removeSlashFromUrl'
+import { useAppActions } from '@/store/app.store'
 
 const loginSchema = z.object({
-  url: z
-    .string()
-    .url({ message: 'login.form.validations.url' })
-    .refine((value) => /^https?:\/\//.test(value), {
-      message: 'login.form.validations.protocol',
-    }),
   username: z.string({ required_error: 'login.form.validations.username' }),
   password: z.string({ required_error: 'login.form.validations.password' }),
 })
 
 type FormData = z.infer<typeof loginSchema>
 
-const defaultUrl = isDesktop() ? 'http://' : 'https://'
-const url = window.SERVER_URL || defaultUrl
-const urlIsValid = url !== defaultUrl
+// Navidrome is reached through the backend of this container (/rest/*)
+const serverUrl = window.location.origin
 
 export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [serverIsIncompatible, setServerIsIncompatible] = useState(false)
   const { saveConfig } = useAppActions()
-  const { hideServer } = useAppData()
   const navigate = useNavigate()
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
-  const shouldHideUrlInput = urlIsValid && hideServer
-
   const form = useForm<FormData>({
     resolver: zodResolver(loginSchema),
     values: {
-      url,
       username: '',
       password: '',
     },
@@ -84,7 +68,7 @@ export function LoginForm() {
     setLoading(true)
 
     // Check if server is compatible
-    const serverInfo = await queryServerInfo(removeSlashFromUrl(data.url))
+    const serverInfo = await queryServerInfo(serverUrl)
 
     // If server version is lower than 1.15.0
     if (serverInfo.protocolVersionNumber < 1150 && forceCompatible !== true) {
@@ -95,10 +79,7 @@ export function LoginForm() {
       setServerIsIncompatible(false)
     }
 
-    const status = await saveConfig({
-      ...data,
-      url: removeSlashFromUrl(data.url),
-    })
+    const status = await saveConfig({ ...data, url: serverUrl })
 
     if (status) {
       await queryClient.invalidateQueries()
@@ -118,9 +99,6 @@ export function LoginForm() {
             <CardHeader className="flex">
               <CardTitle className="flex flex-row justify-between items-center">
                 {t('login.form.server')}
-                <div className="flex gap-2 items-center">
-                  <LangToggle />
-                </div>
               </CardTitle>
               <CardDescription>{t('login.form.description')}</CardDescription>
             </CardHeader>
@@ -128,36 +106,9 @@ export function LoginForm() {
             <CardContent className="space-y-2">
               <FormField
                 control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem className={clsx(shouldHideUrlInput && 'hidden')}>
-                    <FormLabel className="required">
-                      {t('login.form.url')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        id="url"
-                        type="text"
-                        placeholder={t('login.form.urlDescription')}
-                        autoCorrect="false"
-                        autoCapitalize="false"
-                        spellCheck="false"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('login.form.urlDescription')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="username"
                 render={({ field }) => (
-                  <FormItem className={clsx(shouldHideUrlInput && '!mt-0')}>
+                  <FormItem>
                     <FormLabel className="required">
                       {t('login.form.username')}
                     </FormLabel>

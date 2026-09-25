@@ -45,43 +45,14 @@ export function radiosColumns(): ColumnDefType<Radio>[] {
           {i18n.t('radios.table.name')}
         </DataTableColumnHeader>
       ),
-      cell: ({ row }) => <TableRadioTitle name={row.original.name} />,
-    },
-    {
-      id: 'homePageUrl',
-      accessorKey: 'homePageUrl',
-      style: {
-        width: '25%',
-        maxWidth: '25%',
-      },
-      header: i18n.t('radios.table.homepage'),
-      cell: ({ row }) => {
-        const { homePageUrl } = row.original
-
-        if (!homePageUrl) return ''
-
-        return (
-          <div className="truncate">
-            <p className="truncate text-primary">
-              <a
-                href={homePageUrl}
-                target="_blank"
-                rel="nofollow noreferrer"
-                className="hover:underline"
-              >
-                {homePageUrl}
-              </a>
-            </p>
-          </div>
-        )
-      },
+      cell: ({ row }) => <TableRadioTitle radio={row.original} />,
     },
     {
       id: 'streamUrl',
       accessorKey: 'streamUrl',
       style: {
-        width: '25%',
-        maxWidth: '25%',
+        width: '40%',
+        maxWidth: '40%',
         marginRight: '1rem',
       },
       header: i18n.t('radios.table.stream'),

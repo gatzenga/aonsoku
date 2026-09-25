@@ -1,16 +1,9 @@
-# Ignore README and LICENSE files
-README.md
-LICENSE.txt
-
-# Ignore dependency and build folders
 dist/
 node_modules/
-src-tauri/
-media/
-
-# Ignore local metadata and configuration files
+cache/
 .git/
-.DS_Store
+.husky/
 .vscode/
-.github/
+.DS_Store
 .env
+.github/

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { useMatches } from 'react-router-dom'
-import { getDownloadUrl } from '@/api/httpClient'
+import { toast } from 'react-toastify'
+import { getBackendUrl } from '@/api/httpClient'
 import { subsonic } from '@/service/subsonic'
 import { usePlayerActions } from '@/store/player.store'
 import { usePlaylistRemoveSong } from '@/store/playlists.store'
@@ -8,15 +10,16 @@ import { useSongInfo } from '@/store/ui.store'
 import { PlaybackSource } from '@/types/playerContext'
 import { UpdateParams } from '@/types/responses/playlist'
 import { ISong } from '@/types/responses/song'
-import { isDesktop } from '@/utils/desktop'
+import { logger } from '@/utils/logger'
 import { queryKeys } from '@/utils/queryKeys'
-import { useDownload } from './use-download'
 
 type SongIdToAdd = Pick<UpdateParams, 'songIdToAdd'>['songIdToAdd']
 
+export type InstantMixKind = 'song' | 'album' | 'artist'
+
 export function useOptions() {
+  const { t } = useTranslation()
   const { setNextOnQueue, setLastOnQueue, setSongList } = usePlayerActions()
-  const { downloadBrowser, downloadDesktop } = useDownload()
   const { setActionData, setConfirmDialogState } = usePlaylistRemoveSong()
   const matches = useMatches()
   const { setSongId, setModalOpen } = useSongInfo()
@@ -38,13 +41,43 @@ export function useOptions() {
     setLastOnQueue(list)
   }
 
-  function startDownload(id: string) {
-    const url = getDownloadUrl(id)
+  // Built by the backend like in the Shelv player (server/instant-mix.ts)
+  async function startInstantMix(kind: InstantMixKind, id: string) {
+    const toastId = toast.loading(t('instantMix.loading'))
 
-    if (isDesktop()) {
-      downloadDesktop(url, id)
-    } else {
-      downloadBrowser(url)
+    try {
+      const response = await fetch(
+        getBackendUrl('/api/instant-mix', { kind, id }),
+        { cache: 'no-store' },
+      )
+      if (!response.ok) throw new Error(`instant mix: ${response.status}`)
+
+      const { songs } = (await response.json()) as { songs: ISong[] }
+
+      if (songs.length === 0) {
+        toast.update(toastId, {
+          render: t('instantMix.empty'),
+          type: 'info',
+          isLoading: false,
+          autoClose: 4000,
+        })
+        return
+      }
+
+      toast.dismiss(toastId)
+      setSongList(songs, 0, false, {
+        id: `instant-mix-${kind}-${id}`,
+        name: t('options.instantMix'),
+        type: 'songs',
+      })
+    } catch (error) {
+      logger.error('[InstantMix] loading failed', error)
+      toast.update(toastId, {
+        render: t('instantMix.error'),
+        type: 'error',
+        isLoading: false,
+        autoClose: 4000,
+      })
     }
   }
 
@@ -101,7 +134,7 @@ export function useOptions() {
     play,
     playNext,
     playLast,
-    startDownload,
+    startInstantMix,
     addToPlaylist,
     createNewPlaylist,
     removeSongFromPlaylist,

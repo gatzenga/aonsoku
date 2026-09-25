@@ -28,6 +28,8 @@ export function AlbumsMainFilter() {
   const hiddenFilters = [
     AlbumsFilters.ByDiscography,
     AlbumsFilters.Search,
+    AlbumsFilters.ByGenre,
+    AlbumsFilters.Random,
     ...(hideFavoritesSection ? [AlbumsFilters.Starred] : []),
   ]
 
@@ -46,6 +48,7 @@ export function AlbumsMainFilter() {
     setSearchParams((state) => {
       state.set(AlbumsSearchParams.MainFilter, filter)
 
+      state.delete(AlbumsSearchParams.Order)
       state.delete(AlbumsSearchParams.ArtistId)
       state.delete(AlbumsSearchParams.ArtistName)
       if (filter !== AlbumsFilters.ByYear)

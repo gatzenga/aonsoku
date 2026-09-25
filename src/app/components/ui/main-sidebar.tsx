@@ -23,11 +23,9 @@ import { useIsMobile } from '@/app/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import { useMainDrawerState } from '@/store/player.store'
 
-const SIDEBAR_STORAGE_KEY = 'main_sidebar_state'
 const SIDEBAR_WIDTH = '17.5rem'
 const SIDEBAR_WIDTH_MOBILE = '100%'
 const SIDEBAR_WIDTH_ICON = '4rem'
-const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
 type MainSidebarContextProps = {
   state: 'expanded' | 'collapsed'
@@ -70,13 +68,8 @@ function MainSidebarProvider({
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = window.localStorage.getItem(SIDEBAR_STORAGE_KEY)
-      if (stored !== null) return stored === 'true'
-    }
-    return defaultOpen
-  })
+  // The sidebar has a fixed width, it can not be collapsed and nothing is stored.
+  const [_open, _setOpen] = React.useState(defaultOpen)
   const open = openProp ?? _open
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
@@ -85,11 +78,6 @@ function MainSidebarProvider({
         setOpenProp(openState)
       } else {
         _setOpen(openState)
-      }
-
-      // This sets the storage to keep the sidebar state.
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(openState))
       }
     },
     [setOpenProp, open],
@@ -100,22 +88,6 @@ function MainSidebarProvider({
   const toggleMainSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
   }, [isMobile, setOpen, setOpenMobile])
-
-  // Adds a keyboard shortcut to toggle the sidebar.
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
-        (event.metaKey || event.ctrlKey)
-      ) {
-        event.preventDefault()
-        toggleMainSidebar()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [toggleMainSidebar])
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
@@ -337,7 +309,7 @@ function MainSidebarInset({
     <main
       data-slot="sidebar-inset"
       className={cn(
-        'bg-background relative flex w-[calc(100%-var(--sidebar-width))] flex-1 flex-col',
+        'bg-background relative flex w-[calc(100%-var(--sidebar-width))] min-w-0 flex-1 flex-col',
         'md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0',
         'md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm',
         'md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',

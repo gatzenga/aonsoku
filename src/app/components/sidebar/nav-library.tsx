@@ -8,7 +8,6 @@ import {
 import { libraryItems, SidebarItems } from '@/app/layout/sidebar'
 import { useAppStore } from '@/store/app.store'
 import { SidebarMainItem } from './main-item'
-import { SidebarPodcastItem } from './podcast-item'
 
 export function NavLibrary() {
   const { t } = useTranslation()
@@ -19,7 +18,6 @@ export function NavLibrary() {
   const hideFavoritesSection = useAppStore().pages.hideFavoritesSection
   const hidePlaylistsSection = useAppStore().pages.hidePlaylistsSection
   const hideRadiosSection = useAppStore().pages.hideRadiosSection
-  const isPodcastsActive = useAppStore().podcasts.active
 
   const isAllSectionsHidden = useAppStore().pages.isAllSectionsHidden()
 
@@ -41,12 +39,6 @@ export function NavLibrary() {
           if (hidePlaylistsSection && item.id === SidebarItems.Playlists)
             return null
           if (hideRadiosSection && item.id === SidebarItems.Radios) return null
-          if (!isPodcastsActive && item.id === SidebarItems.Podcasts)
-            return null
-
-          if (item.id === SidebarItems.Podcasts) {
-            return <SidebarPodcastItem key={item.id} item={item} />
-          }
 
           return (
             <MainSidebarMenuItem key={item.id}>

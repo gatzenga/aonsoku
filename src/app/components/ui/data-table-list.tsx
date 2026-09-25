@@ -64,6 +64,8 @@ interface DataTableProps<TData, TValue> {
   hasNextPage?: boolean
   scrollToIndex?: boolean
   currentSongIndex?: number
+  // enables drag and drop of rows, e.g. to reorder the queue
+  onRowMove?: (from: number, to: number) => void
 }
 
 export function DataTableList<TData, TValue>({
@@ -81,6 +83,7 @@ export function DataTableList<TData, TValue>({
   hasNextPage,
   scrollToIndex = false,
   currentSongIndex,
+  onRowMove,
 }: DataTableProps<TData, TValue>) {
   const newColumns = columns.filter((column) => {
     return columnFilter?.includes(column.id as ColumnFilter)
@@ -370,6 +373,7 @@ export function DataTableList<TData, TValue>({
                     getContextMenuOptions={getContextMenuOptions}
                     dataType={dataType}
                     pageType={pageType}
+                    onRowMove={onRowMove}
                   />
                 )
               })

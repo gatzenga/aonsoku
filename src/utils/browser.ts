@@ -1,7 +1,6 @@
 import { engineName, isMacOs } from 'react-device-detect'
 import i18n from '@/i18n'
 import { usePlayerStore } from '@/store/player.store'
-import { isDesktop } from './desktop'
 import { isDev } from './env'
 
 export enum MouseButton {
@@ -13,11 +12,6 @@ export enum MouseButton {
 }
 
 export const isChromeOrFirefox = ['Blink', 'Gecko'].includes(engineName)
-
-// Enable only for browsers
-export const hasPiPSupport = isDesktop()
-  ? false
-  : 'documentPictureInPicture' in window
 
 function preventContextMenu() {
   document.addEventListener('contextmenu', (e) => {
@@ -66,8 +60,6 @@ function preventReload() {
     if (!isF5 && !isReloadCmd) return
 
     e.preventDefault()
-
-    if (isDesktop()) return
 
     const { isPlaying } = usePlayerStore.getState().playerState
 

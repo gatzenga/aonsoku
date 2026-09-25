@@ -30,14 +30,6 @@ import { queryKeys } from '@/utils/queryKeys'
 
 const radioSchema = z.object({
   name: z.string().min(3, { message: 'radios.form.validations.name' }),
-  homePageUrl: z
-    .string()
-    .url({ message: 'radios.form.validations.url' })
-    .min(10, { message: 'radios.form.validations.homepageUrlLength' })
-    .refine((value) => /^https?:\/\//.test(value), {
-      message: 'login.form.validations.protocol',
-    })
-    .or(z.literal('')),
   streamUrl: z
     .string()
     .url({ message: 'radios.form.validations.url' })
@@ -51,7 +43,6 @@ type RadioSchema = z.infer<typeof radioSchema>
 
 const defaultValues: RadioSchema = {
   name: '',
-  homePageUrl: '',
   streamUrl: '',
 }
 
@@ -72,7 +63,6 @@ export function RadioFormDialog() {
     } else {
       form.reset({
         name: data.name ?? '',
-        homePageUrl: data.homePageUrl ?? '',
         streamUrl: data.streamUrl ?? '',
       })
     }
@@ -106,18 +96,15 @@ export function RadioFormDialog() {
     },
   })
 
-  async function onSubmit({ name, homePageUrl, streamUrl }: RadioSchema) {
+  async function onSubmit({ name, streamUrl }: RadioSchema) {
     if (isCreation) {
-      await createMutation.mutateAsync({
-        name,
-        homePageUrl,
-        streamUrl,
-      })
+      await createMutation.mutateAsync({ name, streamUrl })
     } else {
+      // Navidrome overwrites the homepage on update, so the stored one is kept
       await updateMutation.mutateAsync({
         id: data.id,
         name,
-        homePageUrl,
+        homePageUrl: data.homePageUrl,
         streamUrl,
       })
     }
@@ -158,26 +145,6 @@ export function RadioFormDialog() {
                     </FormLabel>
                     <FormControl>
                       <Input {...field} id="radio-name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="homePageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('radios.table.homepage')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        id="radio-home-page-url"
-                        autoCorrect="false"
-                        autoCapitalize="false"
-                        spellCheck="false"
-                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

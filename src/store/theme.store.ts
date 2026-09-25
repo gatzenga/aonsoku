@@ -26,17 +26,17 @@ export const useThemeStore = createWithEqualityFn<IThemeContext>()(
       {
         name: 'theme_store',
         version: 1,
+        // THEME from the container is only the default, a theme picked
+        // with the theme button is kept
         merge: (persistedState, currentState) => {
-          if (appThemeFromEnv) {
-            if (persistedState && typeof persistedState === 'object') {
-              persistedState = {
-                ...persistedState,
-                theme: appThemeFromEnv,
-              }
-            }
+          const merged = merge(currentState, persistedState)
+
+          // a stored theme that no longer exists falls back to the default
+          if (!Object.values(Theme).includes(merged.theme)) {
+            merged.theme = appThemeFromEnv || Theme.Dark
           }
 
-          return merge(currentState, persistedState)
+          return merged
         },
       },
     ),

@@ -7,7 +7,9 @@ import { RecentlyPlayed } from '@/app/components/home/recently-played'
 export default function Home() {
   return (
     <div className="w-full">
-      <HomeHeader />
+      <div className="px-8 pt-6">
+        <HomeHeader />
+      </div>
 
       <div className="px-8 pb-6">
         <RecentlyPlayed />

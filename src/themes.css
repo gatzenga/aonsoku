@@ -5,29 +5,6 @@
     --radius: 0.5rem;
   }
 
-  .light {
-    --background: 0 0% 100%;
-    --background-foreground: 210 20% 98%;
-    --foreground: 224 10% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 10% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 10% 15%;
-    --primary: 161 94% 30%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 92.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 161 94% 30%;
-  }
-
   .dark {
     --background: 224 71.4% 8.1%;
     --background-foreground: 222 47% 11%;
@@ -74,52 +51,6 @@
     --ring: 240 4.9% 83.9%;
   }
 
-  .one-dark {
-    --background: 220 13% 16%;
-    --background-foreground: 220 13% 18%;
-    --foreground: 219 14% 84%;
-    --muted: 220 12% 22%;
-    --muted-foreground: 220 12% 72%;
-    --popover: 220 13% 15%;
-    --popover-foreground: 219 14% 84%;
-    --card: 220 13% 16%;
-    --card-foreground: 219 14% 76%;
-    --border: 220 3% 23%;
-    --input: 220 3% 26%;
-    --primary: 220 13% 86%;
-    --primary-foreground: 220 13% 26%;
-    --secondary: 220 3% 25%;
-    --secondary-foreground: 220 3% 85%;
-    --accent: 220 13% 33%;
-    --accent-foreground: 220 13% 93%;
-    --destructive: 3 89% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --ring: 220 13% 86%;
-  }
-
-  .night-owl-light {
-    --background: 0 0% 98%;
-    --background-foreground: 0 0% 96%;
-    --foreground: 243 14% 29%;
-    --muted: 0 12% 90%;
-    --muted-foreground: 0 12% 30%;
-    --popover: 0 0% 95%;
-    --popover-foreground: 243 14% 19%;
-    --card: 0 0% 96%;
-    --card-foreground: 243 14% 24%;
-    --border: 0 0% 93%;
-    --input: 0 0% 90%;
-    --primary: 243 14% 29%;
-    --primary-foreground: 243 14% 89%;
-    --secondary: 243 4% 75%;
-    --secondary-foreground: 243 4% 15%;
-    --accent: 0 0% 83%;
-    --accent-foreground: 0 0% 23%;
-    --destructive: 8 94% 20%;
-    --destructive-foreground: 8 94% 80%;
-    --ring: 243 14% 29%;
-  }
-
   .marmalade-beaver {
     --background: 233 18% 17%;
     --background-foreground: 233 18% 19%;
@@ -141,29 +72,6 @@
     --destructive: 10 90% 57%;
     --destructive-foreground: 0 0% 100%;
     --ring: 44 100% 71%;
-  }
-
-  .noctis-lilac {
-    --background: 249 33% 96%;
-    --background-foreground: 250 100% 97.6%;
-    --foreground: 247 100% 21%;
-    --muted: 249 12% 90%;
-    --muted-foreground: 249 12% 30%;
-    --popover: 249 33% 93%;
-    --popover-foreground: 247 100% 11%;
-    --card: 249 33% 94%;
-    --card-foreground: 247 100% 16%;
-    --border: 249 23% 91%;
-    --input: 249 23% 88%;
-    --primary: 247 78% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 247 30% 75%;
-    --secondary-foreground: 247 30% 15%;
-    --accent: 249 33% 81%;
-    --accent-foreground: 249 33% 21%;
-    --destructive: 3 93% 20%;
-    --destructive-foreground: 3 93% 80%;
-    --ring: 247 78% 65%;
   }
 
   .material-theme {
@@ -210,29 +118,6 @@
     --destructive: 10 97% 48%;
     --destructive-foreground: 0 0% 100%;
     --ring: 45 100% 70%;
-  }
-
-  .github-dark {
-    --background: 216 28% 5%;
-    --background-foreground: 216 28% 7%;
-    --foreground: 210 17% 82%;
-    --muted: 216 12% 15%;
-    --muted-foreground: 216 12% 65%;
-    --popover: 216 28% 4%;
-    --popover-foreground: 210 17% 92%;
-    --card: 216 28% 5%;
-    --card-foreground: 210 17% 87%;
-    --border: 216 18% 12%;
-    --input: 216 18% 15%;
-    --primary: 210 17% 82%;
-    --primary-foreground: 210 17% 22%;
-    --secondary: 210 7% 25%;
-    --secondary-foreground: 210 7% 85%;
-    --accent: 216 28% 22%;
-    --accent-foreground: 216 28% 82%;
-    --destructive: 1 86% 57%;
-    --destructive-foreground: 0 0% 100%;
-    --ring: 210 17% 82%;
   }
 
   .shades-of-purple {
@@ -327,29 +212,6 @@
     --ring: 331 100% 68%;
   }
 
-  .achiever {
-    --background: 18 51% 98%;
-    --background-foreground: 33.3 100% 98%;
-    --foreground: 18 50% 0%;
-    --muted: 18 10% 87%;
-    --muted-foreground: 18 15% 32%;
-    --popover: 18 51% 98%;
-    --popover-foreground: 18 50% 0%;
-    --card: 18 51% 98%;
-    --card-foreground: 18 50% 0%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --primary: 18 83% 58%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 18 5% 87%;
-    --secondary-foreground: 18 5% 27%;
-    --accent: 18 14% 80%;
-    --accent-foreground: 18 14% 20%;
-    --destructive: 20 87% 25%;
-    --destructive-foreground: 20 87% 85%;
-    --ring: 18 83% 58%;
-  }
-
   .dracula {
     --background: 231 15% 18%;
     --background-foreground: 231 15% 20%;
@@ -373,29 +235,6 @@
     --ring: 265 89% 78%;
   }
 
-  .discord {
-    --background: 221 4% 15%;
-    --background-foreground: 217.5 9.09% 17.25%;
-    --foreground: 334 34% 98%;
-    --muted: 210 9.09% 12.94%;
-    --muted-foreground: 334 0% 60.77%;
-    --popover: 210 9.09% 12.94%;
-    --popover-foreground: 334 34% 98%;
-    --card: 210 9.09% 12.94%;
-    --card-foreground: 334 34% 98%;
-    --border: 218 3% 22%;
-    --input: 214.29 5.04% 27.25%;
-    --primary: 226.73 58.43% 65.1%;
-    --primary-foreground: 334 34% 98%;
-    --secondary: 214.29 5.04% 27.25%;
-    --secondary-foreground: 334 34% 98%;
-    --accent: 217.5 3.22% 22.19%;
-    --accent-foreground: 334 34% 98%;
-    --destructive: 358.16 68.78% 53.53%;
-    --destructive-foreground: 334 34% 98%;
-    --ring: 226.73 58.43% 65.1%;
-  }
-
   .everforest-dark {
     --background: 220 17% 18%;
     --background-foreground: 220 17% 20%;
@@ -417,29 +256,6 @@
     --destructive: 0 52% 55%;
     --destructive-foreground: 44 87% 94%;
     --ring: 142 40% 68%;
-  }
-
-  .tinacious-design {
-    --background: 240 100% 99%;
-    --background-foreground: 240 100% 98%;
-    --foreground: 244 18% 21%;
-    --muted: 240 12% 90%;
-    --muted-foreground: 240 12% 30%;
-    --popover: 240 100% 96%;
-    --popover-foreground: 244 18% 21%;
-    --card: 240 100% 97%;
-    --card-foreground: 244 18% 26%;
-    --border: 240 90% 94%;
-    --input: 240 90% 91%;
-    --primary: 330 100% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 330 30% 65%;
-    --secondary-foreground: 330 30% 15%;
-    --accent: 240 90% 94%;
-    --accent-foreground: 240 100% 24%;
-    --destructive: 5 89% 27%;
-    --destructive-foreground: 5 89% 87%;
-    --ring: 330 100% 60%;
   }
 
   .vue-dark {
@@ -532,28 +348,5 @@
     --destructive: 6 82% 51%;
     --destructive-foreground: 0 0% 100%;
     --ring: 39 100% 71%;
-  }
-
-  .arduino-light {
-    --background: 0 0% 100%;
-    --background-foreground: 0 0% 98%;
-    --foreground: 53 8% 21%;
-    --muted: 0 14% 90%;
-    --muted-foreground: 0 12% 30%;
-    --popover: 0 0% 97%;
-    --popover-foreground: 60 7% 11%;
-    --card: 0 0% 98%;
-    --card-foreground: 50 7% 16%;
-    --border: 0 0% 95%;
-    --input: 0 0% 92%;
-    --primary: 180 51% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 180 30% 75%;
-    --secondary-foreground: 180 30% 15%;
-    --accent: 0 0% 85%;
-    --accent-foreground: 0 0% 25%;
-    --destructive: 3 85% 29%;
-    --destructive-foreground: 3 86% 89%;
-    --ring: 180 51% 40%;
   }
 }

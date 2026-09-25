@@ -1,8 +1,5 @@
-import { get, set } from 'idb-keyval'
 import { iso6392BTo1, iso6392TTo1 } from 'iso-639-2'
 import { httpClient } from '@/api/httpClient'
-import { useAppStore } from '@/store/app.store'
-import { usePlayerStore } from '@/store/player.store'
 import {
   ILyric,
   IStructuredLine,
@@ -10,6 +7,7 @@ import {
   LyricsResponse,
   StructuredLyricsResponse,
 } from '@/types/responses/song'
+import { appConfig } from '@/utils/appConfig'
 import { lrclibClient } from '@/utils/appName'
 import { checkServerType, getServerExtensions } from '@/utils/servers'
 
@@ -29,6 +27,12 @@ function normalizeLangCode(lang: string | undefined): string | undefined {
   return lang
 }
 
+// Synced lyrics are always preferred (the setting was removed)
+const preferSyncedLyrics = true
+
+// The custom LRCLIB server is configured in the backend, which proxies it here
+const lrclibGetUrl = '/api/lrclib/api/get'
+
 interface GetLyricsData {
   id: string
   artist: string
@@ -46,28 +50,7 @@ interface LRCLibResponse {
 }
 
 async function getLyrics(getLyricsData: GetLyricsData) {
-  const { preferSyncedLyrics } = usePlayerStore.getState().settings.lyrics
   const { songLyricsEnabled } = getServerExtensions()
-  const cacheEnabled = useAppStore.getState().pages.lyricsCacheEnabled
-
-  const cacheKey = getLyricsCacheKey(
-    getLyricsData,
-    preferSyncedLyrics,
-    songLyricsEnabled,
-  )
-
-  const readCache = cacheEnabled
-    ? (key: string) => get(key)
-    : async () => undefined
-  const writeCache = cacheEnabled
-    ? (key: string, value: unknown) => set(key, value)
-    : () => undefined
-
-  const cachedLyrics = await readCache(cacheKey)
-
-  if (cachedLyrics) {
-    return cachedLyrics
-  }
 
   // First attempt to retrieve lyrics from the server.
   // If we know it supports the OpenSubsonic songLyrics extension with timing info, use that.
@@ -88,42 +71,28 @@ async function getLyrics(getLyricsData: GetLyricsData) {
     )
 
     if (response && preferSyncedLyrics) {
-      const { structuredLyrics } = response.data.lyricsList
+      // Navidrome answers without entries when it has no lyrics for the song
+      const structuredLyrics = response.data.lyricsList?.structuredLyrics ?? []
+      const syncedLyrics = structuredLyrics.find((lyrics) => lyrics.synced)
 
-      if (structuredLyrics && structuredLyrics.length > 0) {
-        const syncedLyrics = structuredLyrics.find((lyrics) => lyrics.synced)
-
-        if (syncedLyrics) {
-          const serverSyncedLyrics = osStructuredLyricsToILyric(syncedLyrics)
-
-          writeCache(cacheKey, serverSyncedLyrics)
-
-          return serverSyncedLyrics
-        }
-      }
+      if (syncedLyrics) return osStructuredLyricsToILyric(syncedLyrics)
 
       // save the plain lyrics retrieved from the server
-      osUnsyncedLyricsFound = osStructuredLyricsToILyric(structuredLyrics[0])
+      if (structuredLyrics.length > 0) {
+        osUnsyncedLyricsFound = osStructuredLyricsToILyric(structuredLyrics[0])
+      }
     }
   }
 
   if (preferSyncedLyrics) {
     const lyrics = await getLyricsFromLRCLib(getLyricsData)
 
-    if (lyrics.value !== '') {
-      writeCache(cacheKey, lyrics)
-
-      return lyrics
-    }
+    if (lyrics.value !== '') return lyrics
   }
 
   // if the server supported the songLyrics extension and lrc did not have lyrics, we don't need to query the server and lrc again.
   // so return the plain lyrics if we found them
-  if (osUnsyncedLyricsFound) {
-    writeCache(cacheKey, osUnsyncedLyricsFound)
-
-    return osUnsyncedLyricsFound
-  }
+  if (osUnsyncedLyricsFound) return osUnsyncedLyricsFound
 
   const response = await httpClient<LyricsResponse>('/getLyrics', {
     method: 'GET',
@@ -141,24 +110,13 @@ async function getLyrics(getLyricsData: GetLyricsData) {
   // Note: If `preferSyncedLyrics` is true and we reached this point, it means the LrcLib
   // does not contains lyrics for the track, so the fallback is unnecessary in that case.
   if (lyricNotFound && !preferSyncedLyrics) {
-    const lyrics = await getLyricsFromLRCLib(getLyricsData)
-
-    if (lyrics.value !== '') {
-      writeCache(cacheKey, lyrics)
-    }
-
-    return lyrics
-  }
-
-  if (response?.data.lyrics) {
-    writeCache(cacheKey, response.data.lyrics)
+    return getLyricsFromLRCLib(getLyricsData)
   }
 
   return response?.data.lyrics
 }
 
 async function getLyricsFromLRCLib(getLyricsData: GetLyricsData) {
-  const { lrclib } = usePlayerStore.getState().settings.privacy
   const { isLms } = checkServerType()
 
   const { title, album, duration } = getLyricsData
@@ -170,7 +128,7 @@ async function getLyricsFromLRCLib(getLyricsData: GetLyricsData) {
     ? getLyricsData.artist.split(',')[0]
     : getLyricsData.artist
 
-  if (!lrclib.enabled || window.DISABLE_LRCLIB) {
+  if (!appConfig.lyrics) {
     return {
       artist,
       title,
@@ -188,16 +146,7 @@ async function getLyricsFromLRCLib(getLyricsData: GetLyricsData) {
     if (duration) params.append('duration', duration.toString())
     if (album) params.append('album_name', album)
 
-    let defaultLrcLibUrl = 'https://lrclib.net/api/get'
-
-    if (lrclib.customUrlEnabled && lrclib.customUrl !== '') {
-      defaultLrcLibUrl = `${lrclib.customUrl}/api/get`
-    }
-
-    const url = new URL(defaultLrcLibUrl)
-    url.search = params.toString()
-
-    const request = await fetch(url.toString(), {
+    const request = await fetch(`${lrclibGetUrl}?${params.toString()}`, {
       headers: {
         'Lrclib-Client': lrclibClient,
       },
@@ -234,21 +183,6 @@ async function getLyricsFromLRCLib(getLyricsData: GetLyricsData) {
 
 function formatLyrics(lyrics: string) {
   return lyrics.trim().replaceAll('\r\n', '\n')
-}
-
-function getLyricsCacheKey(
-  getLyricsData: GetLyricsData,
-  preferSyncedLyrics: boolean,
-  songLyricsEnabled?: boolean,
-) {
-  const { artist, title } = getLyricsData
-
-  const type = preferSyncedLyrics ? 'synced' : 'plain'
-  const serverExtension = songLyricsEnabled ? 'internal' : 'external'
-
-  const keys = ['lyrics', artist, title, type, serverExtension]
-
-  return keys.join(':')
 }
 
 function osStructuredLyricsToILyric(lyrics: IStructuredLyric): ILyric {

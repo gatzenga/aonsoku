@@ -7,10 +7,9 @@ overrides:
 blockExoticSubdeps: false
 
 allowBuilds:
-  bufferutil: true
-  cypress: true
-  electron: true
-  electron-winstaller: true
+  bufferutil: set this to true or false
+  cypress: set this to true or false
+  electron: set this to true or false
+  electron-winstaller: set this to true or false
   esbuild: true
-  register-scheme@https://codeload.github.com/devsnek/node-register-scheme/tar.gz/e7cc9a63a1f512565da44cb57316d9fb10750e17: false
-  utf-8-validate: true
+  utf-8-validate: set this to true or false

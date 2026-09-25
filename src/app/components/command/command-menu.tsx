@@ -22,12 +22,7 @@ import { convertMinutesToMs } from '@/utils/convertSecondsToTime'
 import { queryKeys } from '@/utils/queryKeys'
 import { CommandAlbumResult } from './album-result'
 import { CommandArtistResult } from './artist-result'
-import { CommandGotoPage } from './goto-page'
-import { CommandHome, CommandPages } from './home'
-import { CommandPlaylists } from './playlists'
-import { CommandServer } from './server-management'
 import { CommandSongResult } from './song-result'
-import { CommandThemes } from './themes'
 
 export type CommandItemProps = {
   runCommand: (command: () => unknown) => void
@@ -39,14 +34,8 @@ export default function CommandMenu() {
   const { open, setOpen } = useAppStore((state) => state.command)
 
   const [query, setQuery] = useState('')
-  const [pages, setPages] = useState<CommandPages[]>(['HOME'])
 
-  const activePage = pages[pages.length - 1]
-  const isHome = activePage === 'HOME'
-
-  const enableQuery = Boolean(
-    byteLength(query) >= 3 && activePage !== 'PLAYLISTS',
-  )
+  const enableQuery = byteLength(query) >= 3
 
   const { data: searchResult } = useQuery({
     queryKey: [queryKeys.search, query],
@@ -75,7 +64,6 @@ export default function CommandMenu() {
 
   const clear = useCallback(() => {
     setQuery('')
-    setPages(['HOME'])
   }, [])
 
   const runCommand = useCallback(
@@ -95,28 +83,6 @@ export default function CommandMenu() {
     if (event.key === '/') {
       event.preventDefault()
     }
-  }
-
-  function handleSearchChange(value: string) {
-    if (activePage === 'PLAYLISTS') {
-      setQuery(value)
-    } else {
-      debounced(value)
-    }
-  }
-
-  const removeLastPage = useCallback(() => {
-    setPages((pages) => {
-      const tempPages = [...pages]
-      tempPages.splice(-1, 1)
-      return tempPages
-    })
-  }, [])
-
-  const inputPlaceholder = () => {
-    if (activePage === 'PLAYLISTS') return t('options.playlist.search')
-
-    return t('command.inputPlaceholder')
   }
 
   const showNotFoundMessage = Boolean(
@@ -146,22 +112,18 @@ export default function CommandMenu() {
       <CommandDialog
         open={open}
         onOpenChange={(state) => {
-          if (isHome) {
-            setOpen(state)
-            clear()
-          } else {
-            removeLastPage()
-          }
+          setOpen(state)
+          clear()
         }}
       >
-        <Command shouldFilter={activePage === 'PLAYLISTS'} id="main-command">
+        <Command shouldFilter={false} id="main-command">
           <CommandInput
             data-testid="command-menu-input"
-            placeholder={inputPlaceholder()}
+            placeholder={t('command.inputPlaceholder')}
             autoCorrect="false"
             autoCapitalize="false"
             spellCheck="false"
-            onValueChange={(value) => handleSearchChange(value)}
+            onValueChange={(value) => debounced(value)}
             onKeyDown={handleInputKeyDown}
           />
           <ScrollArea className="max-h-[500px] 2xl:max-h-[700px]">
@@ -196,28 +158,6 @@ export default function CommandMenu() {
                   runCommand={runCommand}
                 />
               )}
-
-              {isHome && (
-                <CommandHome
-                  pages={pages}
-                  setPages={setPages}
-                  runCommand={runCommand}
-                />
-              )}
-
-              {activePage === 'GOTO' && (
-                <CommandGotoPage runCommand={runCommand} />
-              )}
-
-              {activePage === 'THEME' && (
-                <CommandThemes runCommand={runCommand} />
-              )}
-
-              {activePage === 'PLAYLISTS' && (
-                <CommandPlaylists runCommand={runCommand} />
-              )}
-
-              {activePage === 'SERVER' && <CommandServer />}
             </CommandList>
           </ScrollArea>
           <div className="flex justify-end p-2 h-10 gap-1 border-t">

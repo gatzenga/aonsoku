@@ -39,35 +39,27 @@
         "poster": "Poster"
       }
     },
-    "beta": "Beta"
+    "beta": "Beta",
+    "options": "Options"
   },
   "theme": {
     "label": "Theme",
-    "light": "Light",
     "dark": "Dark",
     "system": "System",
     "black": "Black and White",
-    "one-dark": "One Dark",
-    "night-owl-light": "Night Owl Light",
     "marmalade-beaver": "Marmalade Beaver",
-    "noctis-lilac": "Noctis Lilac",
     "material-theme": "Material Theme",
     "monokai-pro": "Monokai Pro",
-    "github-dark": "Github Dark",
     "shades-of-purple": "Shades Of Purple",
     "bearded-solarized": "Bearded Solarized",
     "catppuccin-mocha": "Catppuccin Mocha",
     "nuclear-dark": "Nuclear Dark",
-    "achiever": "Achiever",
     "dracula": "Dracula",
-    "discord": "Discord",
     "everforest-dark": "Everforest Dark",
-    "tinacious-design": "Tinacious Design",
     "vue-dark": "Vue Dark",
     "vim-dark-soft": "Vim Dark Soft",
     "vesper": "Vesper",
-    "mirage": "Mirage",
-    "arduino-light": "Arduino Light"
+    "mirage": "Mirage"
   },
   "playlist": {
     "headline": "Playlist",
@@ -223,7 +215,10 @@
     },
     "topSongs": "Popular",
     "recentAlbums": "Recent albums",
-    "relatedArtists": "Related artists"
+    "relatedArtists": "Related artists",
+    "search": {
+      "placeholder": "Search artists…"
+    }
   },
   "podcasts": {
     "form": {
@@ -469,14 +464,14 @@
     "goto": {
       "episode": "Go to episode",
       "podcast": "Go to podcast"
-    }
+    },
+    "instantMix": "Instant Mix"
   },
   "radios": {
     "label": "Radio",
     "addRadio": "Add Radio",
     "table": {
       "name": "Name",
-      "homepage": "Homepage URL",
       "stream": "Stream URL",
       "actions": {
         "edit": "Edit radio",
@@ -521,7 +516,9 @@
         "homepageUrlLength": "Homepage URL must be at least 10 characters",
         "streamUrlLength": "Stream URL must be at least 10 characters"
       }
-    }
+    },
+    "connecting": "Connecting…",
+    "unreachable": "The radio station could not be reached."
   },
   "time": {
     "days_one": "{{days}} day",
@@ -824,5 +821,20 @@
       "y": "1 year",
       "yy": "%d years"
     }
+  },
+  "smartMix": {
+    "label": "Smart Mixes",
+    "newest": "Newest Tracks",
+    "frequent": "Most Played",
+    "recent": "Recently Played",
+    "shuffle": "Shuffle All",
+    "loading": "Creating smart mix…",
+    "empty": "No tracks found for this mix.",
+    "error": "The smart mix could not be created."
+  },
+  "instantMix": {
+    "loading": "Creating instant mix…",
+    "empty": "No instant mix available for this selection.",
+    "error": "The instant mix could not be created."
   }
 }

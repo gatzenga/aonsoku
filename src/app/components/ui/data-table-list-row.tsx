@@ -1,6 +1,13 @@
 import { Cell, flexRender, Row } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { MouseEvent, memo, TouchEvent, useMemo } from 'react'
+import {
+  DragEvent,
+  MouseEvent,
+  memo,
+  TouchEvent,
+  useMemo,
+  useState,
+} from 'react'
 import { ContextMenuProvider } from '@/app/components/table/context-menu'
 import { usePlayerCurrentSong } from '@/store/player.store'
 import { ColumnDefType } from '@/types/react-table/columnDef'
@@ -17,9 +24,12 @@ interface TableRowProps<TData> {
   getContextMenuOptions: (row: Row<TData>) => JSX.Element | undefined
   dataType?: 'song' | 'artist' | 'playlist' | 'radio'
   pageType?: 'general' | 'queue'
+  onRowMove?: (from: number, to: number) => void
 }
 
 let isTap = false
+// index of the row being dragged, shared by all rows of the list
+let dragIndex: number | null = null
 let tapTimeout: NodeJS.Timeout
 
 export function TableListRow<TData>({
@@ -31,8 +41,38 @@ export function TableListRow<TData>({
   getContextMenuOptions,
   dataType = 'song',
   pageType = 'general',
+  onRowMove,
 }: TableRowProps<TData>) {
   const currentSong = usePlayerCurrentSong()
+  const [dropSide, setDropSide] = useState<'top' | 'bottom' | null>(null)
+  const index = virtualRow.index
+
+  function handleDragStart(e: DragEvent<HTMLDivElement>) {
+    dragIndex = index
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', String(index))
+  }
+
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
+    if (dragIndex === null || dragIndex === index) return
+
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    // the song lands after this row when dragged down, before it when dragged up
+    setDropSide(dragIndex < index ? 'bottom' : 'top')
+  }
+
+  function handleDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault()
+    setDropSide(null)
+    if (dragIndex !== null && dragIndex !== index) onRowMove?.(dragIndex, index)
+    dragIndex = null
+  }
+
+  function handleDragEnd() {
+    dragIndex = null
+    setDropSide(null)
+  }
 
   function handleTouchStart() {
     isTap = true
@@ -78,11 +118,20 @@ export function TableListRow<TData>({
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handleTouchCancel}
         onContextMenu={(e) => handleClicks(e, row)}
+        draggable={onRowMove !== undefined}
+        onDragStart={onRowMove ? handleDragStart : undefined}
+        onDragOver={onRowMove ? handleDragOver : undefined}
+        onDragLeave={onRowMove ? () => setDropSide(null) : undefined}
+        onDrop={onRowMove ? handleDrop : undefined}
+        onDragEnd={onRowMove ? handleDragEnd : undefined}
         className={clsx(
           'group/tablerow w-[calc(100%-10px)] flex flex-row transition-colors',
           'data-[state=selected]:bg-foreground/30 hover:bg-foreground/20',
           isQueue && 'rounded-md',
           isRowSongActive && 'row-active bg-foreground/20',
+          dropSide === 'top' && 'shadow-[inset_0_2px_0_0_hsl(var(--primary))]',
+          dropSide === 'bottom' &&
+            'shadow-[inset_0_-2px_0_0_hsl(var(--primary))]',
         )}
         style={{
           height: `${virtualRow.size}px`,

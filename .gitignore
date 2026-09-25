@@ -34,3 +34,5 @@ env-config.js
 out
 
 .pnpm-store/*
+# Local cache volume of the container
+cache/

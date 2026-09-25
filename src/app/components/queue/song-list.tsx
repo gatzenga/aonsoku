@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/app/components/ui/button'
 import { DataTableList } from '@/app/components/ui/data-table-list'
-import { DialogTitle } from '@/app/components/ui/dialog'
 import { Separator } from '@/app/components/ui/separator'
+import { SimpleTooltip } from '@/app/components/ui/simple-tooltip'
 import { queueColumns } from '@/app/tables/queue-columns'
 import {
   usePlayerActions,
@@ -20,7 +20,7 @@ export function QueueSongList() {
   const { t } = useTranslation()
   const currentList = usePlayerCurrentList()
   const currentSongIndex = usePlayerCurrentSongIndex()
-  const { clearPlayerState, setSongList } = usePlayerActions()
+  const { clearQueue, moveSongInQueue, setSongList } = usePlayerActions()
   const { source } = usePlayerContext()
 
   const columns = useMemo(() => queueColumns(), [])
@@ -33,13 +33,7 @@ export function QueueSongList() {
     return convertSecondsToHumanRead(minutes)
   }, [currentList])
 
-  const columnsToShow: ColumnFilter[] = [
-    'index',
-    'title',
-    'album',
-    'duration',
-    'remove',
-  ]
+  const columnsToShow: ColumnFilter[] = ['index', 'title', 'duration', 'remove']
 
   function getSourceLabel(source: PlaybackSource | null) {
     if (!source) return null
@@ -50,18 +44,15 @@ export function QueueSongList() {
   const sourceLabel = getSourceLabel(source)
 
   return (
-    <div className="flex flex-1 flex-col h-full min-w-[300px]">
-      <DialogTitle className="sr-only">{t('queue.title')}</DialogTitle>
-      <div className="flex items-center justify-between h-8 mb-2">
-        <div className="flex gap-2 items-center text-foreground/70 text-sm whitespace-nowrap shrink min-w-0">
-          <span className="text-foreground shrink-0">{t('queue.title')}</span>
+    <div className="flex flex-1 flex-col h-full min-w-0">
+      <div className="flex items-center justify-between gap-2 h-8 mb-2">
+        <div className="flex gap-1.5 items-center text-muted-foreground text-xs whitespace-nowrap min-w-0">
           {sourceLabel && (
-            <div className="hidden md:flex gap-2 items-center shrink min-w-0">
+            <>
+              <span className="truncate text-foreground">{sourceLabel}</span>
               <span className="shrink-0">{'•'}</span>
-              <span className="truncate">{sourceLabel}</span>
-            </div>
+            </>
           )}
-          <span className="shrink-0">{'•'}</span>
           <span className="shrink-0">
             {t('playlist.songCount', { count: trackListCount })}
           </span>
@@ -71,18 +62,18 @@ export function QueueSongList() {
           </span>
         </div>
 
-        <div>
+        <SimpleTooltip text={t('queue.clear')}>
           <Button
             variant="ghost"
-            className="px-4 h-8 rounded-full py-0 flex items-center justify-center hover:bg-foreground/20"
-            onClick={clearPlayerState}
+            size="icon"
+            className="h-8 w-8 shrink-0 rounded-md"
+            onClick={clearQueue}
           >
-            <ListXIcon className="mr-1 w-5 h-5" />
-            <span className="text-sm">{t('queue.clear')}</span>
+            <ListXIcon className="w-4 h-4" />
           </Button>
-        </div>
+        </SimpleTooltip>
       </div>
-      <Separator className="bg-muted-foreground/20" />
+      <Separator />
 
       <div className="w-full h-full overflow-auto">
         <DataTableList
@@ -98,6 +89,7 @@ export function QueueSongList() {
           allowRowSelection={false}
           showContextMenu={false}
           pageType="queue"
+          onRowMove={moveSongInQueue}
         />
       </div>
     </div>

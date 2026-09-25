@@ -5,10 +5,8 @@ import { Fragment } from 'react/jsx-runtime'
 import { useTranslation } from 'react-i18next'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { Link } from 'react-router-dom'
-
-import { MarqueeTitle } from '@/app/components/fullscreen/marquee-title'
-import { AnimatedCoverVideo } from '@/app/components/album/animated-cover-video'
 import { ImageLoader } from '@/app/components/image-loader'
+import { MarqueeTitle } from '@/app/components/marquee-title'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/routes/routesList'
 import { useSongColor } from '@/store/player.store'
@@ -92,12 +90,6 @@ export function TrackInfo({ song }: { song: ISong | undefined }) {
               />
             )}
           </ImageLoader>
-
-          <AnimatedCoverVideo
-            artist={song.artist}
-            album={song.album}
-            screen="playerBar"
-          />
         </div>
       </div>
       <div className="flex flex-col justify-center w-full overflow-hidden">

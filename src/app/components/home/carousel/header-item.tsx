@@ -47,7 +47,7 @@ export function HeaderItem({ song }: { song: ISong }) {
   return (
     <div
       className={clsx(
-        'w-full h-[250px] 2xl:h-[300px] relative',
+        'w-full h-[180px] 2xl:h-[210px] relative',
         isFirefox && 'bg-black/60',
       )}
     >
@@ -55,12 +55,16 @@ export function HeaderItem({ song }: { song: ISong }) {
         {(src) => (
           <>
             <div data-testid="header-bg" className="absolute inset-0 z-0">
-              <BlurredCanvas src={src} blur={16} className="scale-110" />
+              <BlurredCanvas
+                src={src}
+                blur={24}
+                className="scale-110 opacity-40"
+              />
             </div>
-            <div className="w-full h-full absolute z-10 bg-gradient-to-b from-transparent to-background-foreground">
-              <div className="flex h-full px-8 py-6 gap-4">
+            <div className="w-full h-full absolute z-10 bg-background-foreground/60">
+              <div className="flex h-full p-5 gap-5">
                 <div
-                  className="h-full aspect-square relative group bg-skeleton rounded-lg"
+                  className="h-full aspect-square relative group bg-skeleton rounded-md shadow-md"
                   data-testid="header-image-container"
                 >
                   <LazyLoadImage
@@ -69,12 +73,12 @@ export function HeaderItem({ song }: { song: ISong }) {
                     effect="opacity"
                     width="100%"
                     height="100%"
-                    className="aspect-square rounded-lg object-cover bg-center absolute inset-0 z-0"
+                    className="aspect-square rounded-md object-cover bg-center absolute inset-0 z-0"
                     data-testid="header-image"
                   />
-                  <div className="w-full h-full flex items-center justify-center rounded-lg bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-colors duration-300 absolute inset-0 z-10">
+                  <div className="w-full h-full flex items-center justify-center rounded-md bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-colors duration-300 absolute inset-0 z-10">
                     <Button
-                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full w-14 h-14"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full w-11 h-11"
                       variant="outline"
                       onClick={handlePlayButton}
                       data-testid={dataTestId}
@@ -91,8 +95,8 @@ export function HeaderItem({ song }: { song: ISong }) {
                   <div className="flex items-center gap-2">
                     {isAlbumPlaying && (
                       <EqualizerBars
-                        size={24}
-                        className="text-foreground mb-1"
+                        size={18}
+                        className="text-primary mb-0.5"
                       />
                     )}
                     <Link
@@ -101,7 +105,7 @@ export function HeaderItem({ song }: { song: ISong }) {
                     >
                       <h1
                         data-testid="header-title"
-                        className="w-full scroll-m-20 text-3xl 2xl:text-4xl font-bold tracking-tight mb-0 2xl:mb-1 hover:underline"
+                        className="w-full scroll-m-20 text-xl 2xl:text-2xl font-semibold tracking-tight hover:underline"
                       >
                         {song.title}
                       </h1>
@@ -110,7 +114,7 @@ export function HeaderItem({ song }: { song: ISong }) {
                   {!song.artistId ? (
                     <h4
                       data-testid="header-artist"
-                      className="scroll-m-20 text-lg 2xl:text-xl font-semibold tracking-tight opacity-70"
+                      className="scroll-m-20 text-sm 2xl:text-base font-medium text-muted-foreground"
                     >
                       {song.artist}
                     </h4>
@@ -121,13 +125,13 @@ export function HeaderItem({ song }: { song: ISong }) {
                     >
                       <h4
                         data-testid="header-artist"
-                        className="scroll-m-20 text-lg 2xl:text-xl font-semibold tracking-tight opacity-70 hover:underline"
+                        className="scroll-m-20 text-sm 2xl:text-base font-medium text-muted-foreground hover:underline"
                       >
                         {song.artist}
                       </h4>
                     </Link>
                   )}
-                  <div className="flex gap-2 mt-1 2xl:mt-2">
+                  <div className="flex gap-2 mt-2">
                     {song.genre !== undefined && (
                       <Link
                         to={ROUTES.ALBUMS.GENRE(song.genre)}

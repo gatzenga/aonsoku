@@ -1,5 +1,4 @@
 import omit from 'lodash/omit'
-import { getCachedImage } from '@/cache/image'
 import { useAppStore } from '@/store/app.store'
 import { CoverArt } from '@/types/coverArtType'
 import { AuthType } from '@/types/serverConfig'
@@ -46,8 +45,7 @@ function queryParams() {
   }
 }
 
-function getUrl(path: string, options?: QueryType) {
-  const serverUrl = useAppStore.getState().data.url
+function buildQuery(options?: QueryType) {
   const params = new URLSearchParams(queryParams())
 
   if (options) {
@@ -60,13 +58,25 @@ function getUrl(path: string, options?: QueryType) {
     })
   }
 
-  const queries = params.toString()
+  return params.toString()
+}
+
+function getUrl(path: string, options?: QueryType) {
+  const serverUrl = useAppStore.getState().data.url
   const pathWithoutSlash = path.startsWith('/') ? path.substring(1) : path
   let url = `${serverUrl}/rest/${pathWithoutSlash}`
   url += path.includes('?') ? '&' : '?'
-  url += queries
+  url += buildQuery(options)
 
   return url
+}
+
+// Routes of the backend in this container (/api/*), authenticated with the
+// same Subsonic credentials as /rest/*
+export function getBackendUrl(path: string, options?: QueryType) {
+  const serverUrl = useAppStore.getState().data.url
+
+  return `${serverUrl}${path}?${buildQuery(options)}`
 }
 
 async function browserFetch<T>(
@@ -125,40 +135,18 @@ export async function getCoverArtUrl(
   type: CoverArt = 'album',
   size = '300',
 ): Promise<string> {
-  const url = getSimpleCoverArtUrl(id, type, size)
-
-  if (!id) {
-    return url
-  }
-
-  const { imagesCacheLayerEnabled } = useAppStore.getState().pages
-
-  if (!imagesCacheLayerEnabled) {
-    return url
-  }
-
-  return getCachedImage(url)
+  return getSimpleCoverArtUrl(id, type, size)
 }
 
 export function getSongStreamUrl(
   id: string,
   maxBitRate?: string,
   format?: string,
-  cacheBustToken?: string,
 ) {
   return getUrl('stream', {
     id,
     maxBitRate,
     format,
     estimateContentLength: 'true',
-    ...(cacheBustToken ? { _cb: cacheBustToken } : {}),
-  })
-}
-
-export function getDownloadUrl(id: string, maxBitRate = '0', format = 'raw') {
-  return getUrl('download', {
-    id,
-    maxBitRate,
-    format,
   })
 }

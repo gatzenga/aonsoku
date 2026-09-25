@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import { useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { AnimatedCoverVideo } from '@/app/components/album/animated-cover-video'
 import {
   AlbumArtistInfo,
   AlbumMultipleArtistsInfo,
@@ -27,8 +26,6 @@ interface ImageHeaderProps {
   coverArtType: CoverArt
   coverArtSize: string
   coverArtAlt: string
-  animatedArtworkArtist?: string
-  animatedArtworkAlbum?: string
   badges: BadgesData
   isPlaylist?: boolean
 }
@@ -43,8 +40,6 @@ export default function ImageHeader({
   coverArtType,
   coverArtSize,
   coverArtAlt,
-  animatedArtworkArtist,
-  animatedArtworkAlbum,
   badges,
   isPlaylist = false,
 }: ImageHeaderProps) {
@@ -96,12 +91,6 @@ export default function ImageHeader({
                 onLoad={handleLoadImage}
                 onError={handleError}
                 onClick={() => setOpen(true)}
-              />
-
-              <AnimatedCoverVideo
-                artist={animatedArtworkArtist}
-                album={animatedArtworkAlbum}
-                screen="album"
               />
             </div>
 

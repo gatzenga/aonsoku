@@ -1,4 +1,3 @@
-import Autoplay from 'embla-carousel-autoplay'
 import { HeaderFallback } from '@/app/components/fallbacks/home-fallbacks'
 import { HeaderItem } from '@/app/components/home/carousel/header-item'
 import {
@@ -9,28 +8,16 @@ import {
   CarouselPrevious,
 } from '@/app/components/ui/carousel'
 import { useGetRandomSongs } from '@/app/hooks/use-home'
-import { useAppStore } from '@/store/app.store'
 
 export function HomeHeader() {
   const { data: songs, isLoading, isFetching } = useGetRandomSongs()
-  const autoScrollEnabled = useAppStore().pages.homeAutoScrollEnabled
-  const loopEnabled = useAppStore().pages.homeLoopEnabled
 
   if (isLoading || isFetching) return <HeaderFallback />
   if (!songs || songs.length === 0) return null
 
   return (
     <Carousel
-      className="w-full overflow-hidden z-10"
-      opts={{
-        loop: loopEnabled,
-      }}
-      plugins={[
-        Autoplay({
-          delay: 10000,
-          active: autoScrollEnabled,
-        }),
-      ]}
+      className="w-full overflow-hidden z-10 rounded-lg border"
       data-testid="header-carousel"
     >
       <CarouselContent className="ml-0 flex">
@@ -44,7 +31,7 @@ export function HomeHeader() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="absolute right-8 bottom-6 flex items-center gap-2">
+      <div className="absolute right-5 bottom-5 flex items-center gap-2">
         <CarouselPrevious
           data-testid="header-carousel-previous"
           className="relative inset-0 translate-x-0 translate-y-0 shadow-sm"

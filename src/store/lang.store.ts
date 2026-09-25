@@ -3,7 +3,7 @@ import { devtools, persist, subscribeWithSelector } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { shallow } from 'zustand/shallow'
 import { createWithEqualityFn } from 'zustand/traditional'
-import { languages } from '@/i18n/languages'
+import { findLanguage } from '@/i18n/languages'
 import { ILangContext } from '@/types/langContext'
 
 export const useLangStore = createWithEqualityFn<ILangContext>()(
@@ -17,12 +17,10 @@ export const useLangStore = createWithEqualityFn<ILangContext>()(
           setLang: (lang: string) => {
             if (!lang) return
 
-            const langObject = languages.filter(
-              (language) => language.langCode === lang,
-            )[0]
+            const langObject = findLanguage(lang)
 
             set((state) => {
-              state.langCode = lang
+              state.langCode = langObject.langCode
               state.langNativeName = langObject.nativeName
               state.flag = langObject.flag
             })

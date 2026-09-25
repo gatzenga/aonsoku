@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLang } from '@/store/lang.store'
+import { appConfig } from '@/utils/appConfig'
 
 export function LangObserver() {
   const { i18n } = useTranslation()
@@ -14,10 +15,7 @@ export function LangObserver() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: initial only useEffect
   useEffect(() => {
-    const lang = i18n.resolvedLanguage
-    if (lang && lang !== '') {
-      setLang(lang)
-    }
+    setLang(appConfig.language)
   }, [])
 
   useEffect(() => {

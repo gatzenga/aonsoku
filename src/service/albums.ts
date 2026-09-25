@@ -13,6 +13,7 @@ export interface AlbumListParams {
   fromYear?: string
   toYear?: string
   genre?: string
+  reverse?: boolean
 }
 
 async function getAlbumList(params: Partial<AlbumListParams> = {}) {
@@ -23,6 +24,7 @@ async function getAlbumList(params: Partial<AlbumListParams> = {}) {
     fromYear,
     toYear,
     genre,
+    reverse = false,
   } = params
 
   const response = await httpClient<AlbumListResponse>('/getAlbumList2', {
@@ -34,6 +36,7 @@ async function getAlbumList(params: Partial<AlbumListParams> = {}) {
       fromYear,
       toYear,
       genre,
+      reverse: reverse ? 'true' : undefined,
     },
   })
 

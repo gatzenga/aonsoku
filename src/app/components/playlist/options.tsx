@@ -1,5 +1,4 @@
 import { OptionsButtons } from '@/app/components/options/buttons'
-import { DownloadOptionHandler } from '@/app/components/options/download-handler'
 import { DropdownMenuSeparator } from '@/app/components/ui/dropdown-menu'
 import { useOptions } from '@/app/hooks/use-options'
 import { subsonic } from '@/service/subsonic'
@@ -17,7 +16,6 @@ interface PlaylistOptionsProps {
   showPlay?: boolean
   disablePlayNext?: boolean
   disableAddLast?: boolean
-  disableDownload?: boolean
   disableEdit?: boolean
   disableDelete?: boolean
 }
@@ -28,12 +26,11 @@ export function PlaylistOptions({
   showPlay = false,
   disablePlayNext = false,
   disableAddLast = false,
-  disableDownload = false,
   disableEdit = false,
   disableDelete = false,
 }: PlaylistOptionsProps) {
   const { setPlaylistDialogState, setData } = usePlaylists()
-  const { play, playNext, playLast, startDownload } = useOptions()
+  const { play, playNext, playLast } = useOptions()
   const { setPlaylistId, setConfirmDialogState } = useRemovePlaylist()
   const { isPlaylistActive, isPlaylistPlaying } = useIsPlaylistPlaying(
     playlist.id,
@@ -95,10 +92,6 @@ export function PlaylistOptions({
     }
   }
 
-  function handleDownload() {
-    startDownload(playlist.id)
-  }
-
   return (
     <>
       {variant === 'context' && (
@@ -136,16 +129,6 @@ export function PlaylistOptions({
           handlePlayLast()
         }}
       />
-      <DownloadOptionHandler group={false}>
-        <OptionsButtons.Download
-          variant={variant}
-          disabled={disableDownload}
-          onClick={(e) => {
-            e.stopPropagation()
-            handleDownload()
-          }}
-        />
-      </DownloadOptionHandler>
       <DropdownMenuSeparator />
       <OptionsButtons.EditPlaylist
         variant={variant}

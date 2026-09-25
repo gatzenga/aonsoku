@@ -18,7 +18,6 @@ export function createManualChunks(id: string) {
     if (includes('lucide')) return 'lucide'
     if (includes('embla')) return 'embla'
     if (includes('dayjs')) return 'date-time'
-    if (includes('audio-context')) return 'audio-context'
     if (includes('crypto')) return 'crypto'
     if (includes('lodash')) return 'lodash'
     if (includes('tanstack')) return 'tanstack'

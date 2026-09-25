@@ -1,7 +1,6 @@
 import clsx from 'clsx'
-import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
+import { RefObject, useCallback, useMemo, useState } from 'react'
 import { ProgressSlider } from '@/app/components/ui/slider'
-import { podcasts } from '@/service/podcasts'
 import {
   usePlayerActions,
   usePlayerDuration,
@@ -10,7 +9,6 @@ import {
   usePlayerSonglist,
 } from '@/store/player.store'
 import { convertSecondsToTime } from '@/utils/convertSecondsToTime'
-import { logger } from '@/utils/logger'
 
 interface PlayerProgressProps {
   audioRef: RefObject<HTMLAudioElement>
@@ -22,10 +20,9 @@ export function PlayerProgress({ audioRef }: PlayerProgressProps) {
   const progress = usePlayerProgress()
   const [localProgress, setLocalProgress] = useState(progress)
   const currentDuration = usePlayerDuration()
-  const { currentList, podcastList, currentSongIndex } = usePlayerSonglist()
-  const { isSong, isPodcast } = usePlayerMediaType()
-  const { setProgress, setUpdatePodcastProgress, getCurrentPodcastProgress } =
-    usePlayerActions()
+  const { currentList } = usePlayerSonglist()
+  const { isSong } = usePlayerMediaType()
+  const { setProgress } = usePlayerActions()
 
   const isEmpty = isSong && currentList.length === 0
 
@@ -65,39 +62,6 @@ export function PlayerProgress({ audioRef }: PlayerProgressProps) {
     [currentDuration],
   )
 
-  // Used to save listening progress to backend every 30 seconds
-  useEffect(() => {
-    if (!isPodcast || !podcastList) return
-    if (progress === 0) return
-
-    const send = (progress / 30) % 1 === 0
-    if (!send) return
-
-    const podcast = podcastList[currentSongIndex] ?? null
-    if (!podcast) return
-
-    const podcastProgress = getCurrentPodcastProgress()
-    if (progress === podcastProgress) return
-
-    setUpdatePodcastProgress(progress)
-
-    podcasts
-      .saveEpisodeProgress(podcast.id, progress)
-      .then(() => {
-        logger.info('Progress sent:', progress)
-      })
-      .catch((error) => {
-        logger.error('Error sending progress', error)
-      })
-  }, [
-    currentSongIndex,
-    getCurrentPodcastProgress,
-    isPodcast,
-    podcastList,
-    progress,
-    setUpdatePodcastProgress,
-  ])
-
   const currentTime = convertSecondsToTime(isSeeking ? localProgress : progress)
 
   const isProgressLarge = useMemo(() => {
@@ -124,7 +88,7 @@ export function PlayerProgress({ audioRef }: PlayerProgressProps) {
       >
         {currentTime}
       </small>
-      {!isEmpty || isPodcast ? (
+      {!isEmpty ? (
         <ProgressSlider
           defaultValue={[0]}
           value={isSeeking ? [localProgress] : [progress]}

@@ -16,26 +16,18 @@
   },
   "theme": {
     "nuclear-dark": "Nuclear Dark",
-    "achiever": "Achiever",
     "dracula": "Dracula",
     "label": "Theme",
-    "light": "Light",
     "dark": "Dark",
     "system": "System",
     "black": "Black and White",
-    "one-dark": "One Dark",
     "marmalade-beaver": "Marmalade Beaver",
-    "noctis-lilac": "Noctis Lilac",
     "material-theme": "Material Theme",
-    "night-owl-light": "Night Owl Light",
     "monokai-pro": "Monokai Pro",
-    "github-dark": "Github Dark",
     "shades-of-purple": "Shades Of Purple",
     "bearded-solarized": "Bearded Solarized",
     "catppuccin-mocha": "Catppuccin Mocha",
-    "discord": "Discord",
     "everforest-dark": "Everforest dark",
-    "tinacious-design": "Tinacious Design",
     "vue-dark": "Vue Dark",
     "vim-dark-soft": "Vim Dark Soft"
   },
@@ -285,7 +277,6 @@
       },
       "playTooltip": "{{name}} Radio abspielen",
       "name": "Name",
-      "homepage": "Homepage-URL",
       "stream": "Stream-URL",
       "pauseTooltip": "{{name}} Radio pausieren"
     },
@@ -294,7 +285,9 @@
       "title": "Sie haben keine Radios!",
       "info": "Klicken Sie, um Ihre erste Radiostation hinzuzufügen."
     },
-    "error": "Abspielen des Radios fehlgeschlagen, überprüfen Sie die Stream-URL!"
+    "error": "Abspielen des Radios fehlgeschlagen, überprüfen Sie die Stream-URL!",
+    "connecting": "Verbinde…",
+    "unreachable": "Der Radiosender ist nicht erreichbar."
   },
   "dayjs": {
     "relativeTime": {
@@ -338,7 +331,8 @@
         "list": "Liste"
       }
     },
-    "beta": "Beta"
+    "beta": "Beta",
+    "options": "Optionen"
   },
   "songs": {
     "list": {
@@ -367,7 +361,10 @@
     },
     "topSongs": "Beliebt",
     "recentAlbums": "Neueste Alben",
-    "relatedArtists": "Ähnliche Künstler"
+    "relatedArtists": "Ähnliche Künstler",
+    "search": {
+      "placeholder": "Künstler suchen…"
+    }
   },
   "fullscreen": {
     "noLyrics": "Keine Songtexte gefunden",
@@ -443,7 +440,8 @@
       "podcast": "Zum Podcast gehen",
       "episode": "Zu Episode gehen"
     },
-    "markAsPlayed": "Als gespielt markieren"
+    "markAsPlayed": "Als gespielt markieren",
+    "instantMix": "Instant Mix"
   },
   "time": {
     "days_one": "{{days}} Tag",
@@ -800,5 +798,20 @@
       "shuffleTracks": "Titel zufällig",
       "shuffleAlbums": "Alben zufällig"
     }
+  },
+  "smartMix": {
+    "label": "Smart Mixes",
+    "newest": "Neueste Titel",
+    "frequent": "Meistgespielt",
+    "recent": "Zuletzt gespielt",
+    "shuffle": "Alles mischen",
+    "loading": "Smart Mix wird erstellt…",
+    "empty": "Für diesen Mix wurden keine Titel gefunden.",
+    "error": "Der Smart Mix konnte nicht erstellt werden."
+  },
+  "instantMix": {
+    "loading": "Instant Mix wird erstellt…",
+    "empty": "Für diese Auswahl gibt es keinen Instant Mix.",
+    "error": "Der Instant Mix konnte nicht erstellt werden."
   }
 }

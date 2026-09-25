@@ -11,6 +11,8 @@ import { AlbumListType } from '@/types/responses/album'
 import {
   AlbumsFilters,
   AlbumsSearchParams,
+  naturalOrder,
+  SortOptions,
   YearFilter,
   YearSortOptions,
 } from '@/utils/albumsFilter'
@@ -38,6 +40,14 @@ export function useAlbumsListModel() {
   const genre = getSearchParam<string>(AlbumsSearchParams.Genre, '')
   const artistId = getSearchParam<string>(AlbumsSearchParams.ArtistId, '')
   const query = getSearchParam<string>(AlbumsSearchParams.Query, '')
+  const order = getSearchParam<SortOptions>(
+    AlbumsSearchParams.Order,
+    naturalOrder(currentFilter),
+  )
+  // by year Navidrome sorts both ways itself (fromYear/toYear)
+  const reverse =
+    currentFilter !== AlbumsFilters.ByYear &&
+    order !== naturalOrder(currentFilter)
 
   useEffect(() => {
     scrollDivRef.current = getMainScrollElement()
@@ -73,6 +83,7 @@ export function useAlbumsListModel() {
       fromYear,
       toYear,
       genre,
+      reverse,
     })
   }
 
@@ -83,7 +94,14 @@ export function useAlbumsListModel() {
   }
 
   const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    queryKey: [queryKeys.album.all, currentFilter, yearFilter, genre, query],
+    queryKey: [
+      queryKeys.album.all,
+      currentFilter,
+      yearFilter,
+      genre,
+      query,
+      order,
+    ],
     queryFn: fetchAlbums,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextOffset,

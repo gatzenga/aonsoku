@@ -46,26 +46,10 @@ const playbackShortcuts: IShortcut[] = [
   },
 ]
 
-const navigationShortcuts: IShortcut[] = [
-  {
-    label: 'settings.label',
-    shortcuts: [META_KEY, ','],
-  },
-  {
-    label: 'shortcuts.sidebar.toggle',
-    shortcuts: [META_KEY, 'B'],
-  },
-]
-
 export const allShortcuts = [
   {
     id: 'playback',
     label: 'shortcuts.playback.label',
     shortcuts: playbackShortcuts,
-  },
-  {
-    id: 'navigation',
-    label: 'shortcuts.navigation.label',
-    shortcuts: navigationShortcuts,
   },
 ]

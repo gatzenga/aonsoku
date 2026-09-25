@@ -1,5 +1,4 @@
 import { OptionsButtons } from '@/app/components/options/buttons'
-import { DownloadOptionHandler } from '@/app/components/options/download-handler'
 import { ContextMenuSeparator } from '@/app/components/ui/context-menu'
 import { useOptions } from '@/app/hooks/use-options'
 import { useAppStore } from '@/store/app.store'
@@ -20,10 +19,10 @@ export function SongMenuOptions({
   const {
     playNext,
     playLast,
+    startInstantMix,
     createNewPlaylist,
     addToPlaylist,
     removeSongFromPlaylist,
-    startDownload,
     openSongInfo,
     isOnPlaylistPage,
   } = useOptions()
@@ -44,6 +43,13 @@ export function SongMenuOptions({
         onClick={(e) => {
           e.stopPropagation()
           playLast([song])
+        }}
+      />
+      <OptionsButtons.InstantMix
+        variant={variant}
+        onClick={(e) => {
+          e.stopPropagation()
+          startInstantMix('song', song.id)
         }}
       />
       {!hidePlaylistsSection && (
@@ -67,15 +73,6 @@ export function SongMenuOptions({
           }}
         />
       )}
-      <DownloadOptionHandler context={true}>
-        <OptionsButtons.Download
-          variant={variant}
-          onClick={(e) => {
-            e.stopPropagation()
-            startDownload(song.id)
-          }}
-        />
-      </DownloadOptionHandler>
       <ContextMenuSeparator />
       <OptionsButtons.SongInfo
         variant={variant}

@@ -103,7 +103,11 @@ function PauseButton({ onClick }: PlayPauseButtonProps) {
 interface InfoWrapperProps extends Children {}
 
 function InfoWrapper({ children }: InfoWrapperProps) {
-  return <div className="flex flex-col cursor-default">{children}</div>
+  return (
+    <div className="flex flex-col flex-1 min-w-0 cursor-default">
+      {children}
+    </div>
+  )
 }
 
 interface TitleProps {

@@ -5,11 +5,9 @@ import { MultiBadge } from '@/app/components/ui/badge'
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/app/components/ui/dialog'
-import githubIcon from '@/assets/icons/github-mark-white.svg'
 import { subsonic } from '@/service/subsonic'
 import { getAppInfo } from '@/utils/appName'
 import { queryKeys } from '@/utils/queryKeys'
@@ -21,7 +19,7 @@ interface AboutDialogProps {
 
 export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
   const { t } = useTranslation()
-  const { name, version, url } = getAppInfo()
+  const { name, version } = getAppInfo()
 
   const { data: server, isLoading } = useQuery({
     queryKey: [queryKeys.update.serverInfo],
@@ -70,20 +68,6 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
             </div>
           </div>
         </div>
-
-        <DialogFooter className="w-full border-t border-border px-6 py-4 bg-background-foreground">
-          <div className="flex justify-end">
-            <a
-              className="px-2 py-1 rounded-md bg-primary/40 hover:bg-primary/50 text-foreground border border-primary/40 text-sm font-medium flex items-center justify-center"
-              href={url}
-              target="_blank"
-              rel="nofollow noreferrer"
-            >
-              <img src={githubIcon} alt="Github" className="size-4 mr-2" />
-              Github
-            </a>
-          </div>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

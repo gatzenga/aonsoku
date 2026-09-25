@@ -16,19 +16,11 @@ import {
 } from '@/types/playerContext'
 import { ISong } from '@/types/responses/song'
 import { areSongListsEqual } from '@/utils/compareSongLists'
-import { isDesktop } from '@/utils/desktop'
-import { discordRpc } from '@/utils/discordRpc'
 import { addNextSongList, shuffleSongList } from '@/utils/songListFunctions'
 import { idbStorage } from './idb'
 
 const miniStores = {
   songlist: 'player_songlist',
-}
-
-const blurSettings = {
-  min: 20,
-  max: 100,
-  step: 10,
 }
 
 export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
@@ -44,8 +36,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
             currentList: [],
             currentSongIndex: 0,
             radioList: [],
-            podcastList: [],
-            podcastListProgresses: [],
           },
           playerState: {
             isPlaying: false,
@@ -61,25 +51,11 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
             lyricsState: false,
             hasSyncedTheCurrentTrack: false,
             hasScrobbledTheCurrentTrack: false,
-            currentPlaybackRate: 1,
             hasPrev: false,
             hasNext: false,
             playbackContext: {
               isSourceModified: false,
               source: null,
-            },
-          },
-          fullscreen: {
-            isFullscreen: false,
-            setIsFullscreen: (value) => {
-              set((state) => {
-                state.fullscreen.isFullscreen = value
-              })
-            },
-            reset: () => {
-              set((state) => {
-                state.fullscreen.isFullscreen = false
-              })
             },
           },
           playerProgress: {
@@ -89,99 +65,14 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
             accumulated: 0,
           },
           settings: {
-            privacy: {
-              lrclib: {
-                enabled: true,
-                setEnabled(value) {
-                  set((state) => {
-                    state.settings.privacy.lrclib.enabled = value
-                  })
-                },
-                customUrlEnabled: false,
-                setCustomUrlEnabled(value) {
-                  set((state) => {
-                    state.settings.privacy.lrclib.customUrlEnabled = value
-                  })
-                },
-                customUrl: 'https://lrclib.net',
-                setCustomUrl(value) {
-                  set((state) => {
-                    state.settings.privacy.lrclib.customUrl = value
-                  })
-                },
-              },
-            },
             volume: {
               min: 0,
               max: 100,
               step: 1,
               wheelStep: 5,
             },
-            fullscreen: {
-              autoFullscreenEnabled: false,
-              setAutoFullscreenEnabled: (value) => {
-                set((state) => {
-                  state.settings.fullscreen.autoFullscreenEnabled = value
-                })
-              },
-            },
-            lyrics: {
-              preferSyncedLyrics: false,
-              setPreferSyncedLyrics: (value) => {
-                set((state) => {
-                  state.settings.lyrics.preferSyncedLyrics = value
-                })
-              },
-            },
-            replayGain: {
-              values: {
-                enabled: false,
-                type: 'track',
-                preAmp: 0,
-                error: false,
-                defaultGain: -6,
-              },
-              actions: {
-                setReplayGainEnabled: (value) => {
-                  set((state) => {
-                    state.settings.replayGain.values.enabled = value
-                  })
-                },
-                setReplayGainType: (value) => {
-                  set((state) => {
-                    state.settings.replayGain.values.type = value
-                  })
-                },
-                setReplayGainPreAmp: (value) => {
-                  set((state) => {
-                    state.settings.replayGain.values.preAmp = value
-                  })
-                },
-                setReplayGainError: (value) => {
-                  set((state) => {
-                    state.settings.replayGain.values.error = value
-                  })
-                },
-                setReplayGainDefaultGain: (value) => {
-                  set((state) => {
-                    state.settings.replayGain.values.defaultGain = value
-                  })
-                },
-              },
-            },
             colors: {
               currentSongColor: null,
-              currentSongColorIntensity: 0.65,
-              bigPlayer: {
-                useSongColor: false,
-                blur: {
-                  value: 40,
-                  settings: blurSettings,
-                },
-              },
-              queue: {
-                useSongColor: false,
-              },
             },
           },
           actions: {
@@ -221,7 +112,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                 state.songlist.originalSongIndex = index
                 state.playerState.mediaType = 'song'
                 state.songlist.radioList = []
-                state.songlist.podcastList = []
               })
 
               if (shuffle) {
@@ -273,7 +163,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                   state.playerState.isShuffleActive = false
                   state.playerState.isPlaying = true
                   state.songlist.radioList = []
-                  state.songlist.podcastList = []
                   state.playerState.playbackContext.source = null
                 })
               }
@@ -363,105 +252,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                 state.songlist.currentSongIndex = index
                 state.playerState.isPlaying = true
               })
-            },
-            setPlayPodcast: (list, index, progress) => {
-              const { mediaType } = get().playerState
-              const { podcastList, currentSongIndex } = get().songlist
-
-              if (
-                mediaType === 'podcast' &&
-                podcastList.length > 0 &&
-                list[index].id === podcastList[currentSongIndex].id
-              ) {
-                set((state) => {
-                  state.playerState.isPlaying = true
-                })
-                return
-              }
-
-              get().actions.clearPlayerState()
-              set((state) => {
-                state.playerState.mediaType = 'podcast'
-                state.songlist.podcastList = list
-                state.songlist.currentSongIndex = index
-                state.playerState.isPlaying = true
-                state.songlist.podcastListProgresses[index] = progress
-              })
-            },
-            setUpdatePodcastProgress: (progress) => {
-              const { mediaType } = get().playerState
-              if (mediaType !== 'podcast') return
-
-              const { currentSongIndex } = get().songlist
-
-              set((state) => {
-                state.songlist.podcastListProgresses[currentSongIndex] =
-                  progress
-              })
-            },
-            getCurrentPodcastProgress: () => {
-              const { mediaType } = get().playerState
-              if (mediaType !== 'podcast') return 0
-
-              const { podcastListProgresses, currentSongIndex } = get().songlist
-
-              return podcastListProgresses[currentSongIndex] ?? 0
-            },
-            setNextPodcast: (episode, progress) => {
-              const { podcastList, currentSongIndex } = get().songlist
-
-              const currentListIds = new Set(
-                podcastList.map((episode) => episode.id),
-              )
-              if (currentListIds.has(episode.id)) {
-                return
-              }
-
-              const newPodcastList = addNextSongList(
-                currentSongIndex,
-                podcastList,
-                [episode],
-              )
-
-              const nextIndex = currentSongIndex + 1
-
-              set((state) => {
-                state.songlist.podcastList = newPodcastList
-                state.playerState.mediaType = 'podcast'
-                state.songlist.podcastListProgresses[nextIndex] = progress
-              })
-
-              const { isPlaying } = get().playerState
-
-              if (!isPlaying) {
-                get().actions.setPlayingState(true)
-              }
-            },
-            setLastPodcast: (episode, progress) => {
-              const { podcastList } = get().songlist
-
-              const currentListIds = new Set(
-                podcastList.map((episode) => episode.id),
-              )
-              if (currentListIds.has(episode.id)) {
-                return
-              }
-
-              const newPodcastList = [...podcastList, episode]
-
-              const lastIndex = newPodcastList.length - 1
-
-              set((state) => {
-                state.songlist.podcastList = newPodcastList
-                state.playerState.mediaType = 'podcast'
-                state.songlist.podcastListProgresses[lastIndex] = progress
-              })
-
-              const { isPlaying } = get().playerState
-
-              if (!isPlaying) {
-                get().actions.setPlayingState(true)
-              }
             },
             setPlayingState: (status) => {
               set((state) => {
@@ -570,8 +360,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                 state.songlist.currentList = []
                 state.songlist.currentSong = {} as ISong
                 state.songlist.radioList = []
-                state.songlist.podcastList = []
-                state.songlist.podcastListProgresses = []
                 state.songlist.originalSongIndex = 0
                 state.songlist.currentSongIndex = 0
                 state.playerState.mediaType = 'song'
@@ -627,7 +415,7 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
             },
             hasNextSong: () => {
               const { mediaType } = get().playerState
-              const { currentList, currentSongIndex, radioList, podcastList } =
+              const { currentList, currentSongIndex, radioList } =
                 get().songlist
 
               const nextIndex = currentSongIndex + 1
@@ -637,9 +425,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
               }
               if (mediaType === 'radio') {
                 return nextIndex < radioList.length
-              }
-              if (mediaType === 'podcast') {
-                return nextIndex < podcastList.length
               }
 
               return false
@@ -722,11 +507,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                 state.songlist.currentList = songList
               })
             },
-            setPlaybackRate: (value) => {
-              set((state) => {
-                state.playerState.currentPlaybackRate = value
-              })
-            },
             setAudioPlayerRef: (audioPlayer) => {
               set(
                 produce((state: IPlayerContext) => {
@@ -793,6 +573,58 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                 state.songlist.currentSongIndex = updatedCurrentIndex
                 state.songlist.originalSongIndex = updatedOriginalIndex
               })
+            },
+            // Removes every song from the queue except the one playing
+            clearQueue: () => {
+              const { currentList, currentSongIndex } = get().songlist
+              const current = currentList[currentSongIndex]
+
+              if (!current) {
+                get().actions.clearPlayerState()
+                return
+              }
+
+              set((state) => {
+                state.songlist.currentList = [current]
+                state.songlist.originalList = [current]
+                state.songlist.shuffledList = [current]
+                state.songlist.currentSongIndex = 0
+                state.songlist.originalSongIndex = 0
+                state.playerState.playbackContext.source = null
+              })
+              get().actions.updateQueueChecks()
+            },
+            moveSongInQueue: (from, to) => {
+              const { currentList, currentSongIndex } = get().songlist
+              const { isShuffleActive } = get().playerState
+
+              if (from === to || !currentList[from] || !currentList[to]) return
+
+              const newList = [...currentList]
+              const [moved] = newList.splice(from, 1)
+              newList.splice(to, 0, moved)
+
+              // keep the playing song selected at its new position
+              let newIndex = currentSongIndex
+              if (from === currentSongIndex) newIndex = to
+              else if (from < currentSongIndex && to >= currentSongIndex)
+                newIndex -= 1
+              else if (from > currentSongIndex && to <= currentSongIndex)
+                newIndex += 1
+
+              set((state) => {
+                state.songlist.currentList = newList
+                state.songlist.currentSongIndex = newIndex
+                state.playerState.playbackContext.isSourceModified = true
+
+                if (isShuffleActive) {
+                  state.songlist.shuffledList = newList
+                } else {
+                  state.songlist.originalList = newList
+                  state.songlist.originalSongIndex = newIndex
+                }
+              })
+              get().actions.updateQueueChecks()
             },
             setMainDrawerState: (status) => {
               set((state) => {
@@ -909,47 +741,9 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
                 state.playerState.hasNext = hasNextSong()
               })
             },
-            resetConfig: () => {
-              set((state) => {
-                state.settings.colors.queue.useSongColor = false
-                state.settings.colors.bigPlayer.useSongColor = false
-                state.settings.colors.bigPlayer.blur.value = 40
-                state.settings.colors.bigPlayer.blur.settings = blurSettings
-                state.settings.colors.currentSongColorIntensity = 0.65
-                state.settings.fullscreen.autoFullscreenEnabled = false
-                state.settings.lyrics.preferSyncedLyrics = false
-                state.settings.replayGain.values = {
-                  enabled: false,
-                  type: 'track',
-                  preAmp: 0,
-                  error: false,
-                  defaultGain: -6,
-                }
-              })
-            },
             setCurrentSongColor: (value) => {
               set((state) => {
                 state.settings.colors.currentSongColor = value
-              })
-            },
-            setCurrentSongIntensity: (value) => {
-              set((state) => {
-                state.settings.colors.currentSongColorIntensity = value
-              })
-            },
-            setUseSongColorOnQueue: (value) => {
-              set((state) => {
-                state.settings.colors.queue.useSongColor = value
-              })
-            },
-            setUseSongColorOnBigPlayer: (value) => {
-              set((state) => {
-                state.settings.colors.bigPlayer.useSongColor = value
-              })
-            },
-            setBigPlayerBlurValue: (value) => {
-              set((state) => {
-                state.settings.colors.bigPlayer.blur.value = value
               })
             },
           },
@@ -983,7 +777,6 @@ export const usePlayerStore = createWithEqualityFn<IPlayerContext>()(
             'playerState.mainDrawerState',
             'playerState.queueState',
             'playerState.lyricsState',
-            'state.settings.colors.bigPlayer.blur.settings',
           ])
 
           return appStore
@@ -1009,7 +802,7 @@ usePlayerStore.subscribe(
   () => {
     const playerStore = usePlayerStore.getState()
     const { mediaType } = playerStore.playerState
-    if (mediaType === 'radio' || mediaType === 'podcast') return
+    if (mediaType === 'radio') return
 
     playerStore.actions.checkIsSongStarred()
     playerStore.actions.setCurrentSong()
@@ -1018,10 +811,6 @@ usePlayerStore.subscribe(
     const { progress } = playerStore.playerProgress
 
     const isSonglistEmpty = currentList.length === 0
-
-    if (isSonglistEmpty) {
-      playerStore.fullscreen.reset()
-    }
 
     if (isSonglistEmpty && progress > 0) {
       playerStore.actions.resetProgress()
@@ -1036,7 +825,6 @@ usePlayerStore.subscribe(
   ({ songlist }) => [
     songlist.currentList,
     songlist.radioList,
-    songlist.podcastList,
     songlist.currentSongIndex,
   ],
   () => {
@@ -1044,29 +832,6 @@ usePlayerStore.subscribe(
   },
   {
     equalityFn: shallow,
-  },
-)
-
-usePlayerStore.subscribe(
-  (state) => [
-    state.songlist.currentSong,
-    state.playerState.isPlaying,
-    state.playerState.currentDuration,
-  ],
-  () => {
-    discordRpc.sendCurrentSong()
-  },
-  {
-    equalityFn: shallow,
-  },
-)
-
-usePlayerStore.subscribe(
-  (state) => state.playerProgress.progress,
-  (progress, prevProgress) => {
-    if (Math.abs(progress - prevProgress) > 0.02) {
-      discordRpc.sendCurrentSong()
-    }
   },
 )
 
@@ -1110,74 +875,17 @@ usePlayerStore.subscribe((state, prevState) => {
   }
 })
 
-function desktopStateListener() {
-  if (!isDesktop()) return
-
-  const { togglePlayPause, playPrevSong, playNextSong } =
-    usePlayerStore.getState().actions
-
-  window.api.playerStateListener((action) => {
-    if (action === 'togglePlayPause') togglePlayPause()
-    if (action === 'skipBackwards') playPrevSong()
-    if (action === 'skipForward') playNextSong()
-  })
-}
-
-desktopStateListener()
-
-function updateDesktopState() {
-  if (!isDesktop()) return
-
-  const { isPlaying, hasPrev, hasNext } = usePlayerStore.getState().playerState
-  const { currentList, podcastList, radioList } =
-    usePlayerStore.getState().songlist
-
-  const hasSongs = currentList.length >= 1
-  const hasPodcasts = podcastList.length >= 1
-  const hasRadios = radioList.length >= 1
-
-  window.api.updatePlayerState({
-    isPlaying,
-    hasPrevious: hasPrev,
-    hasNext,
-    hasSonglist: hasSongs || hasPodcasts || hasRadios,
-  })
-}
-
-updateDesktopState()
-
-usePlayerStore.subscribe(
-  (state) => [
-    state.playerState.isPlaying,
-    state.playerState.hasPrev,
-    state.playerState.hasNext,
-    state.songlist.currentList,
-  ],
-  () => {
-    updateDesktopState()
-  },
-  {
-    equalityFn: shallow,
-  },
-)
-
 export const usePlayerActions = () => usePlayerStore((state) => state.actions)
 
 export const usePlayerSonglist = () =>
   usePlayerStore((state) => {
-    const {
-      currentList,
-      currentSong,
-      currentSongIndex,
-      podcastList,
-      radioList,
-    } = state.songlist
+    const { currentList, currentSong, currentSongIndex, radioList } =
+      state.songlist
 
     return {
       currentList,
       currentSong,
       currentSongIndex,
-      podcastList,
       radioList,
     }
   })
@@ -1200,44 +908,16 @@ export const usePlayerVolume = () => ({
 export const useVolumeSettings = () =>
   usePlayerStore((state) => state.settings.volume)
 
-export const useReplayGainState = () => {
-  const { enabled, type, preAmp, error, defaultGain } = usePlayerStore(
-    (state) => state.settings.replayGain.values,
-  )
-
-  return {
-    replayGainEnabled: enabled,
-    replayGainType: type,
-    replayGainPreAmp: preAmp,
-    replayGainError: error,
-    replayGainDefaultGain: defaultGain,
-  }
-}
-
-export const useReplayGainActions = () =>
-  usePlayerStore((state) => state.settings.replayGain.actions)
-
-export const useFullscreenPlayerSettings = () =>
-  usePlayerStore((state) => state.settings.fullscreen)
-
-export const useLrcLibSettings = () =>
-  usePlayerStore((state) => state.settings.privacy.lrclib)
-
-export const useLyricsSettings = () =>
-  usePlayerStore((state) => state.settings.lyrics)
-
 export const usePlayerSettings = () => usePlayerStore((state) => state.settings)
 
 export const usePlayerMediaType = () => {
   const mediaType = usePlayerStore((state) => state.playerState.mediaType)
   const isSong = mediaType === 'song'
   const isRadio = mediaType === 'radio'
-  const isPodcast = mediaType === 'podcast'
 
   return {
     isSong,
     isRadio,
-    isPodcast,
   }
 }
 
@@ -1291,36 +971,17 @@ export const useLyricsState = () =>
 
 export const useSongColor = () =>
   usePlayerStore((state) => {
-    const { currentSongColor, currentSongColorIntensity, queue } =
-      state.settings.colors
-    const { useSongColor, blur } = state.settings.colors.bigPlayer
-    const {
-      setCurrentSongColor,
-      setUseSongColorOnQueue,
-      setUseSongColorOnBigPlayer,
-      setBigPlayerBlurValue,
-      setCurrentSongIntensity,
-    } = state.actions
+    const { currentSongColor } = state.settings.colors
+    const { setCurrentSongColor } = state.actions
 
     return {
       currentSongColor,
       setCurrentSongColor,
-      currentSongColorIntensity,
-      setCurrentSongIntensity,
-      useSongColorOnQueue: queue.useSongColor,
-      useSongColorOnBigPlayer: useSongColor,
-      setUseSongColorOnQueue,
-      setUseSongColorOnBigPlayer,
-      bigPlayerBlur: blur,
-      setBigPlayerBlurValue,
     }
   })
 
 export const usePlayerCurrentList = () =>
   usePlayerStore((state) => state.songlist.currentList)
-
-export const usePlayerFullscreen = () =>
-  usePlayerStore((state) => state.fullscreen)
 
 export const usePlayerContext = () =>
   usePlayerStore((state) => state.playerState.playbackContext)

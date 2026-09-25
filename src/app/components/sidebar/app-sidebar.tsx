@@ -3,7 +3,6 @@ import {
   MainSidebar,
   MainSidebarContent,
   MainSidebarHeader,
-  MainSidebarRail,
 } from '@/app/components/ui/main-sidebar'
 import { MiniSidebarSearch } from './mini-search'
 import { SidebarMiniSeparator } from './mini-separator'
@@ -28,7 +27,6 @@ export function AppSidebar({
         <NavLibrary />
       </MainSidebarContent>
       <NavPlaylists />
-      <MainSidebarRail />
     </MainSidebar>
   )
 }

@@ -1,5 +1,3 @@
-import { SettingsOptions } from '@/app/components/settings/options'
-
 export enum AuthType {
   PASSWORD,
   TOKEN,
@@ -20,32 +18,15 @@ interface IAppPages {
   showInfoPanel: boolean
   toggleShowInfoPanel: () => void
   hideArtistsSection: boolean
-  setHideArtistsSection: (value: boolean) => void
   hideSongsSection: boolean
-  setHideSongsSection: (value: boolean) => void
   hideAlbumsSection: boolean
-  setHideAlbumsSection: (value: boolean) => void
   hideGenresSection: boolean
-  setHideGenresSection: (value: boolean) => void
   hideFavoritesSection: boolean
-  setHideFavoritesSection: (value: boolean) => void
   hidePlaylistsSection: boolean
-  setHidePlaylistsSection: (value: boolean) => void
   hideRadiosSection: boolean
-  setHideRadiosSection: (value: boolean) => void
   artistsPageViewType: PageViewType
   setArtistsPageViewType: (type: PageViewType) => void
-  imagesCacheLayerEnabled: boolean
-  setImagesCacheLayerEnabled: (value: boolean) => void
-  lyricsCacheEnabled: boolean
-  setLyricsCacheEnabled: (value: boolean) => void
-  mediaCacheEnabled: boolean
-  setMediaCacheEnabled: (value: boolean) => void
   isAllSectionsHidden: () => boolean
-  homeAutoScrollEnabled: boolean
-  setHomeAutoScrollEnabled: (value: boolean) => void
-  homeLoopEnabled: boolean
-  setHomeLoopEnabled: (value: boolean) => void
 }
 
 export interface IAppData extends IServerConfig {
@@ -53,8 +34,6 @@ export interface IAppData extends IServerConfig {
   isServerConfigured: boolean
   osType: string
   logoutDialogState: boolean
-  hideServer: boolean
-  lockUser: boolean
   songCount: number | null
 }
 
@@ -73,84 +52,9 @@ export interface IAppCommand {
   setOpen: (value: boolean) => void
 }
 
-export interface IAppUpdate {
-  openDialog: boolean
-  setOpenDialog: (value: boolean) => void
-  remindOnNextBoot: boolean
-  setRemindOnNextBoot: (value: boolean) => void
-}
-
-interface IAppSettings {
-  openDialog: boolean
-  setOpenDialog: (value: boolean) => void
-  currentPage: SettingsOptions
-  setCurrentPage: (page: SettingsOptions) => void
-}
-
-interface IAppArtworkScreens {
-  album: boolean
-  setAlbum: (value: boolean) => void
-  fullscreen: boolean
-  setFullscreen: (value: boolean) => void
-  playerBar: boolean
-  setPlayerBar: (value: boolean) => void
-  drawer: boolean
-  setDrawer: (value: boolean) => void
-}
-
-interface IAppArtwork {
-  enabled: boolean
-  setEnabled: (value: boolean) => void
-  customUrlEnabled: boolean
-  setCustomUrlEnabled: (value: boolean) => void
-  baseUrl: string
-  setBaseUrl: (value: string) => void
-  screens: IAppArtworkScreens
-}
-
-interface IPodcasts {
-  active: boolean
-  setActive: (value: boolean) => void
-  serviceUrl: string
-  setServiceUrl: (value: string) => void
-  useDefaultUser: boolean
-  setUseDefaultUser: (value: boolean) => void
-  customUser: string
-  setCustomUser: (value: string) => void
-  customUrl: string
-  setCustomUrl: (value: string) => void
-  collapsibleState: boolean
-  setCollapsibleState: (value: boolean) => void
-}
-
-interface IAccounts {
-  discord: {
-    rpcEnabled: boolean
-    setRpcEnabled: (value: boolean) => void
-  }
-}
-
-// When changing the desktop data types
-// You have to update the electron one.
-// Located at -> electron > main > core > settings.ts
-interface IDesktop {
-  data: {
-    minimizeToTray: boolean
-  }
-  actions: {
-    setMinimizeToTray: (value: boolean) => void
-  }
-}
-
 export interface IAppContext {
   data: IAppData
-  accounts: IAccounts
-  podcasts: IPodcasts
-  artwork: IAppArtwork
   pages: IAppPages
-  desktop: IDesktop
   command: IAppCommand
   actions: IAppActions
-  update: IAppUpdate
-  settings: IAppSettings
 }

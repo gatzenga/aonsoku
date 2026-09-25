@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { EqualizerBars } from '@/app/components/icons/equalizer-bars'
 import { ImageLoader } from '@/app/components/image-loader'
 import { PreviewCard } from '@/app/components/preview-card/card'
+import { ArtistCardMenu } from '@/app/components/preview-card/card-menu'
 import { useSongList } from '@/app/hooks/use-song-list'
 import { ROUTES } from '@/routes/routesList'
 import { useIsArtistPlaying, usePlayerActions } from '@/store/player.store'
@@ -51,24 +52,29 @@ function ArtistCard({ artist }: ArtistCardProps) {
           <PreviewCard.PlayButton onClick={handlePlayButton} />
         )}
       </PreviewCard.ImageWrapper>
-      <PreviewCard.InfoWrapper>
-        <div className="flex items-center gap-1">
-          {isArtistPlaying && (
-            <EqualizerBars size={14} className="mb-0.5 text-primary" />
-          )}
-          <PreviewCard.Title
-            link={ROUTES.ARTIST.PAGE(artist.id)}
-            className={clsx(isArtistPlaying && 'text-primary')}
-          >
-            {artist.name}
-          </PreviewCard.Title>
+      <div className="flex items-start gap-1">
+        <PreviewCard.InfoWrapper>
+          <div className="flex items-center gap-1">
+            {isArtistPlaying && (
+              <EqualizerBars size={14} className="mb-0.5 text-primary" />
+            )}
+            <PreviewCard.Title
+              link={ROUTES.ARTIST.PAGE(artist.id)}
+              className={clsx(isArtistPlaying && 'text-primary')}
+            >
+              {artist.name}
+            </PreviewCard.Title>
+          </div>
+          <PreviewCard.Subtitle enableLink={false}>
+            {t('artist.info.albumsCount', {
+              count: artist.albumCount,
+            })}
+          </PreviewCard.Subtitle>
+        </PreviewCard.InfoWrapper>
+        <div className="ml-auto mt-0.5">
+          <ArtistCardMenu id={artist.id} name={artist.name} />
         </div>
-        <PreviewCard.Subtitle enableLink={false}>
-          {t('artist.info.albumsCount', {
-            count: artist.albumCount,
-          })}
-        </PreviewCard.Subtitle>
-      </PreviewCard.InfoWrapper>
+      </div>
     </PreviewCard.Root>
   )
 }

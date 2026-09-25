@@ -2,11 +2,11 @@ import { Skeleton } from '@/app/components/ui/skeleton'
 
 export function HeaderFallback() {
   return (
-    <div className="flex w-full bg-skeleton h-[250px] 2xl:h-[300px] px-8 py-6 gap-4">
-      <Skeleton className="bg-background/50 h-full aspect-square rounded-lg" />
+    <div className="flex w-full bg-skeleton h-[180px] 2xl:h-[210px] p-5 gap-5 rounded-lg">
+      <Skeleton className="bg-background/50 h-full aspect-square rounded-md" />
       <div className="flex flex-col gap-3 w-full h-full justify-end">
-        <Skeleton className="w-96 h-10 bg-background/50" />
-        <Skeleton className="w-60 h-6 bg-background/50" />
+        <Skeleton className="w-72 h-7 bg-background/50" />
+        <Skeleton className="w-48 h-5 bg-background/50" />
 
         <div className="flex gap-2">
           <Skeleton className="w-16 h-6 bg-background/50 rounded-full" />

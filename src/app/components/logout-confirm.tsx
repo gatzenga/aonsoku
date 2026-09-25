@@ -29,14 +29,13 @@ export function LogoutConfirmDialog({
     (state) => state.actions.setLogoutDialogState,
   )
   const navigate = useNavigate()
-  const { clearPlayerState, resetConfig } = usePlayerActions()
+  const { clearPlayerState } = usePlayerActions()
   const { t } = useTranslation()
 
   function handleRemoveConfig(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     removeConfig()
     clearPlayerState()
-    resetConfig()
     setLogoutDialogState(false)
     navigate(ROUTES.SERVER_CONFIG, { replace: true })
   }

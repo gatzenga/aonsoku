@@ -128,8 +128,6 @@ export default function Album() {
         coverArtType="album"
         coverArtSize="700"
         coverArtAlt={album.name}
-        animatedArtworkArtist={album.artist}
-        animatedArtworkAlbum={album.name}
         badges={badges}
       />
 

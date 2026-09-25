@@ -8,8 +8,6 @@ const LIBRARY = {
   ALBUMS: '/library/albums',
   FAVORITES: '/library/favorites',
   PLAYLISTS: '/library/playlists',
-  PODCASTS: '/library/podcasts',
-  EPISODES: '/library/episodes',
   RADIOS: '/library/radios',
   GENRES: '/library/genres',
 }
@@ -56,17 +54,6 @@ const PLAYLIST = {
   PATH: `${LIBRARY.PLAYLISTS}/:playlistId`,
 }
 
-const PODCASTS = {
-  PAGE: (podcastId: string) => `${LIBRARY.PODCASTS}/${podcastId}`,
-  PATH: `${LIBRARY.PODCASTS}/:podcastId`,
-}
-
-const EPISODES = {
-  PAGE: (episodeId: string) => `${LIBRARY.EPISODES}/${episodeId}`,
-  PATH: `${LIBRARY.EPISODES}/:episodeId`,
-  LATEST: `${LIBRARY.EPISODES}/latest`,
-}
-
 const GENRE = {
   PAGE: (genreName: string) =>
     `${LIBRARY.GENRES}/${encodeURIComponent(genreName)}`,
@@ -83,8 +70,6 @@ export const ROUTES = {
   SONGS,
   FAVORITES,
   PLAYLIST,
-  PODCASTS,
-  EPISODES,
   GENRE,
   SERVER_CONFIG,
 }

@@ -5,6 +5,7 @@ export enum AlbumsSearchParams {
   ArtistId = 'artistId',
   ArtistName = 'artistName',
   Query = 'query',
+  Order = 'order',
 }
 
 export enum PersistedAlbumListKeys {
@@ -88,13 +89,16 @@ export enum SortOptions {
   Desc = 'desc',
 }
 
-export enum EpisodesOrderByOptions {
-  PublishedAt = 'published_at',
-  Title = 'title',
-  Duration = 'duration',
-}
+// The direction Navidrome returns each list in. The other direction is
+// produced by the backend (reverse=true), see server/album-order.ts.
+const naturallyAscending: string[] = [
+  AlbumsFilters.ByArtist,
+  AlbumsFilters.ByName,
+  AlbumsFilters.ByGenre,
+]
 
-export enum PodcastsOrderByOptions {
-  Title = 'title',
-  EpisodeCount = 'episode_count',
+export function naturalOrder(filter: string): SortOptions {
+  return naturallyAscending.includes(filter)
+    ? SortOptions.Asc
+    : SortOptions.Desc
 }

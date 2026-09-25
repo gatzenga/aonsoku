@@ -4,19 +4,27 @@ import { defineConfig } from 'vite'
 import { createManualChunks } from './src/manual-chunks'
 
 // https://vitejs.dev/config/
+// In development the backend (server/index.ts) runs separately
+const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080'
+
 export default defineConfig({
   plugins: [react()],
   base: './',
+  server: {
+    proxy: {
+      '/rest': backendUrl,
+      '/api': backendUrl,
+      '/env-config.js': backendUrl,
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      cy: path.resolve(__dirname, './cypress'),
     },
   },
   build: {
     minify: 'terser',
     rollupOptions: {
-      external: ['bufferutil', 'utf-8-validate'],
       output: {
         manualChunks: createManualChunks,
       },

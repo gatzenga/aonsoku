@@ -1,6 +1,5 @@
 import { getSimpleCoverArtUrl } from '@/api/httpClient'
 import { usePlayerStore } from '@/store/player.store'
-import { EpisodeWithPodcast } from '@/types/responses/podcasts'
 import { ISong } from '@/types/responses/song'
 
 const artworkSizes = ['96', '128', '192', '256', '384', '512']
@@ -28,37 +27,28 @@ function setMediaSession(song: ISong) {
   })
 }
 
-function setPodcastMediaSession(episode: EpisodeWithPodcast) {
-  if (!navigator.mediaSession) return
-
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: episode.title,
-    album: episode.podcast.title,
-    artist: episode.podcast.author,
-    artwork: [
-      {
-        src: episode.image_url,
-        sizes: '',
-        type: 'image/jpeg',
-      },
-    ],
-  })
+interface RadioMediaSession {
+  title: string
+  artist: string
+  stationName: string
+  artworkUrl: string | null
 }
 
-async function setRadioMediaSession(label: string, radioName: string) {
+function setRadioMediaSession({
+  title,
+  artist,
+  stationName,
+  artworkUrl,
+}: RadioMediaSession) {
   if (!navigator.mediaSession) return
 
   navigator.mediaSession.metadata = new MediaMetadata({
-    title: radioName,
-    artist: label,
-    album: '',
-    artwork: [
-      {
-        src: '',
-        sizes: '',
-        type: '',
-      },
-    ],
+    title,
+    artist,
+    album: stationName,
+    artwork: artworkUrl
+      ? [{ src: new URL(artworkUrl, window.location.href).toString() }]
+      : [],
   })
 }
 
@@ -90,31 +80,10 @@ function setHandlers() {
   mediaSession.setActionHandler('nexttrack', () => playNextSong())
 }
 
-interface SetPodcastHandlerParams {
-  handleSeekAction: (value: number) => void
-}
-
-function setPodcastHandlers({ handleSeekAction }: SetPodcastHandlerParams) {
-  const { mediaSession } = navigator
-  if (!mediaSession) return
-
-  const { setPlayingState } = usePlayerStore.getState().actions
-
-  mediaSession.setActionHandler('previoustrack', null)
-  mediaSession.setActionHandler('nexttrack', null)
-
-  mediaSession.setActionHandler('play', () => setPlayingState(true))
-  mediaSession.setActionHandler('pause', () => setPlayingState(false))
-  mediaSession.setActionHandler('seekbackward', () => handleSeekAction(-15))
-  mediaSession.setActionHandler('seekforward', () => handleSeekAction(30))
-}
-
 export const manageMediaSession = {
   removeMediaSession,
   setMediaSession,
   setRadioMediaSession,
-  setPodcastMediaSession,
   setPlaybackState,
   setHandlers,
-  setPodcastHandlers,
 }

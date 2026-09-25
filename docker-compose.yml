@@ -1,15 +1,32 @@
-version: '3.8'
-
 services:
   aonsoku:
+    image: ghcr.io/gatzenga/aonsoku:latest
     container_name: aonsoku
-    image: ghcr.io/victoralvesf/aonsoku:latest
     restart: unless-stopped
-    ports:
-      - 8080:8080
     environment:
-      - APP_USER=${APP_USER}
-      - APP_PASSWORD=${APP_PASSWORD}
-      - APP_AUTH_TYPE=${APP_AUTH_TYPE}
-      - SERVER_URL=${SERVER_URL}
-      - HIDE_SERVER=${HIDE_SERVER}
+      - PUID=1035
+      - PGID=100
+      - NAVIDROME_URL=http://172.168.22.10:4533
+      - LANGUAGE=de
+      - LYRICS_SERVER=https://lrclib.vkugler.ch
+      - THEME=
+      - SIDEBAR_ARTISTS=true
+      - SIDEBAR_SONGS=true
+      - SIDEBAR_ALBUMS=true
+      - SIDEBAR_GENRES=true
+      - SIDEBAR_RADIOS=true
+      - FEATURE_FAVORITES=true
+      - FEATURE_PLAYLISTS=true
+      - CACHE_IMAGES=true
+      - CACHE_LYRICS=true
+    volumes:
+      - /volume2/docker/aonsoku/cache:/cache
+    ports:
+      - "127.0.0.1:9180:8080"
+    networks:
+      navidrome:
+        ipv4_address: 172.168.22.80
+
+networks:
+  navidrome:
+    external: true

@@ -5,8 +5,15 @@ import { AlbumListType } from '@/types/responses/album'
 import { AlbumsFilters, AlbumsSearchParams } from '@/utils/albumsFilter'
 import { SearchParamsHandler } from '@/utils/searchParamsHandler'
 import { AlbumsFilterByGenre } from './filters/by-genre'
-import { AlbumsFilterByYear } from './filters/by-year'
 import { AlbumsMainFilter } from './filters/main'
+import { AlbumsSortDirection } from './filters/sort-direction'
+
+// search results and a discography have no sort order to switch
+const unsortableFilters: string[] = [
+  AlbumsFilters.Search,
+  AlbumsFilters.ByDiscography,
+  AlbumsFilters.Random,
+]
 
 export function AlbumsFilter() {
   const { t } = useTranslation()
@@ -20,7 +27,7 @@ export function AlbumsFilter() {
 
   return (
     <div className="flex gap-2 flex-1 justify-end">
-      {currentFilter === AlbumsFilters.ByYear && <AlbumsFilterByYear />}
+      {!unsortableFilters.includes(currentFilter) && <AlbumsSortDirection />}
 
       {currentFilter === AlbumsFilters.ByGenre && <AlbumsFilterByGenre />}
 
