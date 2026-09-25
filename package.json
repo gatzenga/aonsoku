@@ -82,6 +82,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@types/crypto-js": "^4.2.2",
     "@types/html-to-text": "^9.0.4",
     "@types/linkify-it": "^5.0.0",

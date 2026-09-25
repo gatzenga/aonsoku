@@ -163,6 +163,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('@tailwindcss/container-queries'),
     require('tailwindcss-animate'),
     require('tailwind-extended-shadows'),
     function ({ matchUtilities, theme }) {

@@ -60,7 +60,7 @@ export default function RelatedArtistsList({
         </div>
       </div>
 
-      <div className="transform-gpu">
+      <div className="transform-gpu @container">
         <Carousel
           opts={{
             align: 'start',
@@ -70,7 +70,10 @@ export default function RelatedArtistsList({
         >
           <CarouselContent>
             {similarArtists.map((artist) => (
-              <CarouselItem key={artist.id} className="basis-1/6 2xl:basis-1/8">
+              <CarouselItem
+                key={artist.id}
+                className="basis-1/2 @sm:basis-1/3 @lg:basis-1/4 @3xl:basis-1/5 @5xl:basis-1/6 @7xl:basis-1/8"
+              >
                 <RelatedArtistCard artist={artist} />
               </CarouselItem>
             ))}

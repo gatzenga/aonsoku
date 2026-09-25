@@ -52,45 +52,46 @@ export function GridViewWrapper<T>({
     [gridColumnsSize, list.length],
   )
 
-  const calculateSize = useCallback(() => {
-    if (!scrollDivRef.current) {
-      return {
-        width: defaultWidth,
-        height: defaultWidth + titleHeight,
-      }
-    }
+  const updateGridDimensions = useCallback(() => {
+    const scrollEl = scrollDivRef.current || getMainScrollElement()
+    if (!scrollEl) return
+    scrollDivRef.current = scrollEl
 
-    const pageWidth = scrollDivRef.current.offsetWidth
-    const gapsDifference = (gridColumnsSize - 1) * gap
+    const pageWidth = scrollEl.clientWidth || scrollEl.offsetWidth
+    if (!pageWidth) return
+
     const bothSidesPaddingSize = padding * 2
-    const remainSpace = pageWidth - bothSidesPaddingSize - gapsDifference
+    const availableWidth = Math.max(0, pageWidth - bothSidesPaddingSize)
+    const targetWidth = defaultWidth || 181
 
-    const width = remainSpace / gridColumnsSize
+    const newColumns = Math.max(
+      1,
+      Math.floor((availableWidth + gap) / (targetWidth + gap)),
+    )
+
+    const gapsDifference = (newColumns - 1) * gap
+    const remainSpace = Math.max(0, availableWidth - gapsDifference)
+
+    const width = remainSpace / newColumns
     const height = width + titleHeight
 
-    return {
-      width,
-      height,
-    }
-  }, [defaultWidth, gap, gridColumnsSize, padding, titleHeight])
+    setGridColumnsSize((prev) => (prev !== newColumns ? newColumns : prev))
+    setSize((prev) => {
+      if (
+        Math.abs(prev.width - width) < 0.5 &&
+        Math.abs(prev.height - height) < 0.5
+      ) {
+        return prev
+      }
+      return { width, height }
+    })
+  }, [defaultWidth, gap, padding, titleHeight])
 
   useLayoutEffect(() => {
-    scrollDivRef.current = getMainScrollElement()
+    const scrollEl = getMainScrollElement()
+    scrollDivRef.current = scrollEl
 
-    const handleResize = () => {
-      const width = window.innerWidth
-
-      if (width >= 1536) {
-        setGridColumnsSize(8) // 2xl breakpoint
-      } else if (width >= 1024) {
-        setGridColumnsSize(6) // lg breakpoint
-      } else {
-        setGridColumnsSize(4) // default size
-      }
-
-      const newSize = calculateSize()
-      setSize(newSize)
-    }
+    updateGridDimensions()
 
     let animationFrameId: number
 
@@ -98,16 +99,15 @@ export function GridViewWrapper<T>({
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId)
       }
-      animationFrameId = requestAnimationFrame(handleResize)
+      animationFrameId = requestAnimationFrame(updateGridDimensions)
     }
 
-    handleResize()
     window.addEventListener('resize', resizeHandler)
 
     const resizeObserver = new ResizeObserver(resizeHandler)
 
-    if (scrollDivRef.current) {
-      resizeObserver.observe(scrollDivRef.current)
+    if (scrollEl) {
+      resizeObserver.observe(scrollEl)
     }
 
     return () => {
@@ -115,7 +115,7 @@ export function GridViewWrapper<T>({
       cancelAnimationFrame(animationFrameId)
       resizeObserver.disconnect()
     }
-  }, [calculateSize])
+  }, [updateGridDimensions])
 
   const grid = useGrid({
     scrollRef: scrollDivRef,
@@ -145,6 +145,7 @@ export function GridViewWrapper<T>({
     columnVirtualizer,
     grid.virtualItemHeight,
     grid.virtualItemWidth,
+    gridColumnsSize,
   ])
 
   // Restoring scroll position
