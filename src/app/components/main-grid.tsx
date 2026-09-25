@@ -19,7 +19,7 @@ export function MainGrid({ className, ...props }: MainGridProps) {
   return (
     <div
       className={cn(
-        'grid grid-cols-2 @sm:grid-cols-3 @lg:grid-cols-4 @3xl:grid-cols-5 @5xl:grid-cols-6 @7xl:grid-cols-8 gap-4 h-full',
+        'grid grid-cols-[repeat(auto-fill,132px)] gap-4 h-full',
         className,
       )}
       {...props}

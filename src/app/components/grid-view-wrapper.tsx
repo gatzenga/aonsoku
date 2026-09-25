@@ -32,7 +32,7 @@ export function GridViewWrapper<T>({
   titleHeight = 40,
   gap = 16,
   padding = 32,
-  defaultWidth = 181,
+  defaultWidth = 132,
   type,
 }: GridViewWrapperProps<T>) {
   const scrollDivRef = useRef<HTMLDivElement | null>(null)
@@ -62,17 +62,14 @@ export function GridViewWrapper<T>({
 
     const bothSidesPaddingSize = padding * 2
     const availableWidth = Math.max(0, pageWidth - bothSidesPaddingSize)
-    const targetWidth = defaultWidth || 181
+    const targetWidth = defaultWidth || 132
 
     const newColumns = Math.max(
       1,
       Math.floor((availableWidth + gap) / (targetWidth + gap)),
     )
 
-    const gapsDifference = (newColumns - 1) * gap
-    const remainSpace = Math.max(0, availableWidth - gapsDifference)
-
-    const width = remainSpace / newColumns
+    const width = targetWidth
     const height = width + titleHeight
 
     setGridColumnsSize((prev) => (prev !== newColumns ? newColumns : prev))

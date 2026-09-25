@@ -1,5 +1,4 @@
 import { Skeleton } from '@/app/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 
 export function HeaderFallback() {
   return (
@@ -56,20 +55,10 @@ export function PreviewListFallback() {
 
 export function SongsCarouselFallback() {
   return (
-    <div className="@container w-full overflow-hidden">
+    <div className="w-full overflow-hidden">
       <div className="flex gap-4">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <div
-            className={cn(
-              'shrink-0 grow-0 basis-1/2 @sm:basis-1/3 @lg:basis-1/4 @3xl:basis-1/5 @5xl:basis-1/6 @7xl:basis-1/8',
-              index >= 2 && 'hidden @sm:block',
-              index >= 3 && 'hidden @lg:block',
-              index >= 4 && 'hidden @3xl:block',
-              index >= 5 && 'hidden @5xl:block',
-              index >= 6 && 'hidden @7xl:block',
-            )}
-            key={index}
-          >
+        {Array.from({ length: 12 }).map((_, index) => (
+          <div className="w-[132px] shrink-0" key={index}>
             <Skeleton className="aspect-square" />
             <Skeleton className="h-[13px] w-11/12 mt-2" />
             <Skeleton className="h-3 w-1/2 mt-[7px]" />
