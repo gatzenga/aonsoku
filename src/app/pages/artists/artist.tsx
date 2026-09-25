@@ -105,6 +105,7 @@ export default function Artist() {
 
         {recentAlbums.length > 0 && (
           <PreviewList
+            cardSize="compact"
             title={t('artist.recentAlbums')}
             list={recentAlbums}
             moreTitle={t('album.more.discography')}
@@ -112,7 +113,7 @@ export default function Artist() {
           />
         )}
 
-        {artistInfoIsLoading && <PreviewListFallback />}
+        {artistInfoIsLoading && <PreviewListFallback cardWidth={132} />}
         {artistInfo?.similarArtist && !artistInfoIsLoading && (
           <RelatedArtistsList
             title={t('artist.relatedArtists')}

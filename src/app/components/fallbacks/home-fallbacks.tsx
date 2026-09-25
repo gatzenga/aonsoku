@@ -37,7 +37,7 @@ export function HomeFallback() {
   )
 }
 
-export function PreviewListFallback() {
+export function PreviewListFallback({ cardWidth = 156 }: { cardWidth?: number }) {
   return (
     <div className="w-full flex flex-col my-4">
       <div className="flex justify-between my-4">
@@ -48,17 +48,21 @@ export function PreviewListFallback() {
         </div>
       </div>
 
-      <SongsCarouselFallback />
+      <SongsCarouselFallback cardWidth={cardWidth} />
     </div>
   )
 }
 
-export function SongsCarouselFallback() {
+export function SongsCarouselFallback({ cardWidth = 156 }: { cardWidth?: number }) {
   return (
     <div className="w-full overflow-hidden">
       <div className="flex gap-4">
         {Array.from({ length: 12 }).map((_, index) => (
-          <div className="w-[132px] shrink-0" key={index}>
+          <div
+            style={{ width: `${cardWidth}px` }}
+            className="shrink-0"
+            key={index}
+          >
             <Skeleton className="aspect-square" />
             <Skeleton className="h-[13px] w-11/12 mt-2" />
             <Skeleton className="h-3 w-1/2 mt-[7px]" />

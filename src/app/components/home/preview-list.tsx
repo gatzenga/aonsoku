@@ -17,6 +17,7 @@ interface PreviewListProps {
   showMore?: boolean
   moreTitle?: string
   moreRoute?: string
+  cardSize?: 'home' | 'compact'
 }
 
 export default function PreviewList({
@@ -25,6 +26,7 @@ export default function PreviewList({
   showMore = true,
   moreTitle,
   moreRoute,
+  cardSize = 'home',
 }: PreviewListProps) {
   const [api, setApi] = useState<CarouselApi>()
   const [canScrollPrev, setCanScrollPrev] = useState<boolean>()
@@ -98,7 +100,11 @@ export default function PreviewList({
             {list.map((album, index) => (
               <CarouselItem
                 key={album.id}
-                className="shrink-0 basis-[148px] max-w-[148px]"
+                className={
+                  cardSize === 'home'
+                    ? 'shrink-0 basis-[172px] max-w-[172px]'
+                    : 'shrink-0 basis-[148px] max-w-[148px]'
+                }
                 data-testid={`preview-list-carousel-item-${index}`}
               >
                 <AlbumGridCard album={album} />

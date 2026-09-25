@@ -155,9 +155,10 @@ export default function Album() {
         <RecordLabelsInfo album={album} />
 
         <div className="mt-4">
-          {moreAlbumsIsLoading && <PreviewListFallback />}
+          {moreAlbumsIsLoading && <PreviewListFallback cardWidth={132} />}
           {artistAlbums && !moreAlbumsIsLoading && album.artistId && (
             <PreviewList
+              cardSize="compact"
               list={artistAlbums}
               showMore={true}
               title={t('album.more.listTitle')}
@@ -166,9 +167,10 @@ export default function Album() {
             />
           )}
 
-          {randomAlbumsIsLoading && <PreviewListFallback />}
+          {randomAlbumsIsLoading && <PreviewListFallback cardWidth={132} />}
           {!randomAlbumsIsLoading && randomGenreAlbums && (
             <PreviewList
+              cardSize="compact"
               list={randomGenreAlbums}
               moreRoute={ROUTES.ALBUMS.GENRE(album.genre)}
               title={t('album.more.genreTitle', {
