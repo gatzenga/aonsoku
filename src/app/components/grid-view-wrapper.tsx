@@ -69,7 +69,10 @@ export function GridViewWrapper<T>({
       Math.floor((availableWidth + gap) / (targetWidth + gap)),
     )
 
-    const width = targetWidth
+    const gapsDifference = (newColumns - 1) * gap
+    const remainSpace = Math.max(0, availableWidth - gapsDifference)
+
+    const width = remainSpace / newColumns
     const height = width + titleHeight
 
     setGridColumnsSize((prev) => (prev !== newColumns ? newColumns : prev))
