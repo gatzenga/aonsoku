@@ -102,7 +102,7 @@ export default function PreviewList({
                 key={album.id}
                 className={
                   cardSize === 'home'
-                    ? 'shrink-0 basis-[172px] max-w-[172px]'
+                    ? 'shrink-0 basis-[226px] max-w-[226px]'
                     : 'shrink-0 basis-[148px] max-w-[148px]'
                 }
                 data-testid={`preview-list-carousel-item-${index}`}

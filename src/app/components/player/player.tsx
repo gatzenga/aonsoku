@@ -16,7 +16,6 @@ import {
 import { LoopState } from '@/types/playerContext'
 import { ensureSupportForAlac } from '@/utils/alac'
 import { AudioPlayer } from './audio'
-import { PlayerClearQueueButton } from './clear-queue-button'
 import { PlayerControls } from './controls'
 import { PlayerLikeButton } from './like-button'
 import { PlayerLyricsButton } from './lyrics-button'
@@ -32,7 +31,6 @@ const MemoPlayerControls = memo(PlayerControls)
 const MemoPlayerProgress = memo(PlayerProgress)
 const MemoPlayerLikeButton = memo(PlayerLikeButton)
 const MemoPlayerQueueButton = memo(PlayerQueueButton)
-const MemoPlayerClearQueueButton = memo(PlayerClearQueueButton)
 const MemoPlayerVolume = memo(PlayerVolume)
 const MemoLyricsButton = memo(PlayerLyricsButton)
 const MemoSmartMixButton = memo(PlayerSmartMixButton)
@@ -146,7 +144,6 @@ export function Player() {
                 <MemoPlayerQueueButton disabled={!song} />
               </>
             )}
-            {isRadio && <MemoPlayerClearQueueButton disabled={!radio} />}
 
             <MemoPlayerVolume
               audioRef={getAudioRef()}

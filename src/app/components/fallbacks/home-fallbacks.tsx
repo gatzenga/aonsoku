@@ -37,7 +37,7 @@ export function HomeFallback() {
   )
 }
 
-export function PreviewListFallback({ cardWidth = 156 }: { cardWidth?: number }) {
+export function PreviewListFallback({ cardWidth = 210 }: { cardWidth?: number }) {
   return (
     <div className="w-full flex flex-col my-4">
       <div className="flex justify-between my-4">
@@ -53,7 +53,7 @@ export function PreviewListFallback({ cardWidth = 156 }: { cardWidth?: number })
   )
 }
 
-export function SongsCarouselFallback({ cardWidth = 156 }: { cardWidth?: number }) {
+export function SongsCarouselFallback({ cardWidth = 210 }: { cardWidth?: number }) {
   return (
     <div className="w-full overflow-hidden">
       <div className="flex gap-4">
