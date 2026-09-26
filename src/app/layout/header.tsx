@@ -1,6 +1,5 @@
 import { NavigationButtons } from '@/app/components/header/navigation-buttons'
 import { UserDropdown } from '@/app/components/header/user-dropdown'
-import { HeaderSongInfo } from '@/app/components/header-song'
 import { ThemeButton } from '@/app/components/theme/theme-button'
 
 export function Header() {
@@ -9,7 +8,7 @@ export function Header() {
       <div className="flex items-center">
         <NavigationButtons />
       </div>
-      <HeaderSongInfo />
+      <div className="col-span-2" />
       <div className="flex justify-end items-center gap-2">
         <ThemeButton />
         <UserDropdown />
