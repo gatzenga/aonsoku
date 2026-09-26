@@ -6,7 +6,6 @@ type Language = 'de' | 'en'
 
 export interface ClientConfig {
   language: Language
-  theme: string | null
   lyrics: boolean
   sidebar: {
     artists: boolean
@@ -108,7 +107,6 @@ export function loadConfig(): ServerConfig {
     },
     client: {
       language: readLanguage('LANGUAGE', 'de'),
-      theme: process.env.THEME?.trim() || null,
       lyrics: lyricsServer !== null,
       sidebar: {
         artists: readBoolean('SIDEBAR_ARTISTS', true),

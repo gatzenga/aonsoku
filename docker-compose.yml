@@ -7,9 +7,8 @@ services:
       - PUID=1035
       - PGID=100
       - NAVIDROME_URL=http://172.168.22.10:4533
-      - LANGUAGE=de
       - LYRICS_SERVER=https://lrclib.vkugler.ch
-      - THEME=
+      - LANGUAGE=de
       - SIDEBAR_ARTISTS=true
       - SIDEBAR_SONGS=true
       - SIDEBAR_ALBUMS=true

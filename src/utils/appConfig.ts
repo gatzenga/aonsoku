@@ -6,7 +6,6 @@ export type AppLanguage = 'de' | 'en'
 
 export interface AppConfig {
   language: AppLanguage
-  theme: string | null
   lyrics: boolean
   sidebar: {
     artists: boolean
@@ -23,7 +22,6 @@ export interface AppConfig {
 
 const defaultConfig: AppConfig = {
   language: 'de',
-  theme: null,
   lyrics: false,
   sidebar: {
     artists: true,
