@@ -1,3 +1,4 @@
+import { RadioIcon } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { getSongStreamUrl } from '@/api/httpClient'
 import { RadioInfo } from '@/app/components/player/radio-info'
@@ -132,17 +133,27 @@ export function Player() {
         {/* Remain Controls and Volume */}
         <div className="flex items-center w-full justify-end">
           <div className="flex items-center gap-1">
-            {isSong && !hideFavoritesSection && (
-              <>
-                <MemoPlayerLikeButton disabled={!song} />
-              </>
-            )}
-            <MemoSmartMixButton />
             {isSong && (
               <>
+                {!hideFavoritesSection && (
+                  <MemoPlayerLikeButton disabled={!song} />
+                )}
+                <MemoSmartMixButton />
                 <MemoLyricsButton disabled={!song} />
                 <MemoPlayerQueueButton disabled={!song} />
               </>
+            )}
+
+            {isRadio && radio && (
+              <div
+                className="flex items-center gap-1.5 mr-2 text-xs text-muted-foreground"
+                data-testid="player-radio-station"
+              >
+                <span className="truncate max-w-[160px] 2xl:max-w-[220px]">
+                  {radio.name}
+                </span>
+                <RadioIcon className="w-4 h-4 shrink-0" />
+              </div>
             )}
 
             <MemoPlayerVolume

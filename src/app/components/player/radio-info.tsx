@@ -21,7 +21,7 @@ export function RadioInfo({ radio }: { radio: Radio | undefined }) {
             data-testid="radio-icon"
           />
         </div>
-        <div className="flex flex-col w-[66%] max-w-full justify-end text-left overflow-hidden">
+        <div className="flex flex-col justify-center w-full text-left overflow-hidden">
           <span className="text-sm font-medium" data-testid="radio-no-playing">
             {t('player.noRadioPlaying')}
           </span>
@@ -44,7 +44,7 @@ export function RadioInfo({ radio }: { radio: Radio | undefined }) {
         className="w-[70px] h-[70px] min-w-[70px] rounded shadow-md"
         iconClassName="w-12 h-12"
       />
-      <div className="flex flex-col w-[66%] max-w-full justify-end text-left overflow-hidden">
+      <div className="flex flex-col justify-center w-full text-left overflow-hidden">
         {title ? (
           <Fragment>
             <MarqueeTitle gap="mr-6">
@@ -57,12 +57,6 @@ export function RadioInfo({ radio }: { radio: Radio | undefined }) {
               data-testid="radio-artist"
             >
               {subtitle}
-            </span>
-            <span
-              className="text-xs font-light text-muted-foreground truncate"
-              data-testid="radio-name"
-            >
-              {radio.name}
             </span>
           </Fragment>
         ) : (

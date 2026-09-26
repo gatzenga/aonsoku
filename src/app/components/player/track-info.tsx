@@ -103,7 +103,17 @@ export function TrackInfo({ song }: { song: ISong | undefined }) {
             </span>
           </Link>
         </MarqueeTitle>
-        <TrackInfoArtistsLinks song={song} />
+        <div className="flex items-center text-xs text-muted-foreground w-full overflow-hidden truncate">
+          <TrackInfoArtistsLinks song={song} />
+          {song.album && (
+            <>
+              {song.artist && (
+                <span className="mx-1 shrink-0 select-none">·</span>
+              )}
+              <AlbumLink id={song.albumId} name={song.album} />
+            </>
+          )}
+        </div>
       </div>
     </Fragment>
   )
@@ -120,7 +130,7 @@ function TrackInfoArtistsLinks({ song }: TrackInfoArtistsLinksProps) {
     const reducedArtists = artists.slice(0, ALBUM_ARTISTS_MAX_NUMBER)
 
     return (
-      <div className="flex items-center gap-1 text-xs text-muted-foreground w-full maskImage-marquee-fade-finished">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
         {reducedArtists.map(({ id, name }, index) => (
           <div key={id} className="flex items-center">
             <ArtistLink id={id} name={name} />
@@ -143,12 +153,36 @@ function ArtistLink({ id, name }: ArtistLinkProps) {
   return (
     <Link
       to={ROUTES.ARTIST.PAGE(id ?? '')}
-      className={cn('w-fit inline-flex', !id && 'pointer-events-none')}
+      className={cn('inline-flex truncate shrink-0 max-w-[200px]', !id && 'pointer-events-none')}
       data-testid="track-artist-url"
     >
       <span
         className={cn(
-          'text-xs text-muted-foreground text-nowrap',
+          'text-xs text-muted-foreground text-nowrap truncate',
+          id && 'hover:underline hover:text-foreground',
+        )}
+      >
+        {name}
+      </span>
+    </Link>
+  )
+}
+
+type AlbumLinkProps = {
+  id?: string
+  name: string
+}
+
+function AlbumLink({ id, name }: AlbumLinkProps) {
+  return (
+    <Link
+      to={ROUTES.ALBUM.PAGE(id ?? '')}
+      className={cn('inline-flex truncate min-w-0', !id && 'pointer-events-none')}
+      data-testid="track-album-url"
+    >
+      <span
+        className={cn(
+          'text-xs text-muted-foreground text-nowrap truncate',
           id && 'hover:underline hover:text-foreground',
         )}
       >
