@@ -31,13 +31,13 @@ export function ThemeButton() {
           </Button>
         </PopoverTrigger>
       </SimpleTooltip>
-      <PopoverContent align="end" className="w-[26rem] p-3">
-        <div className="grid grid-cols-4 gap-3 max-h-[70vh] overflow-y-auto">
+      <PopoverContent align="end" className="w-[34rem] max-w-[calc(100vw-2rem)] p-3">
+        <div className="grid grid-cols-4 gap-3">
           {appThemes.map((theme) => (
             <button
               key={theme}
               type="button"
-              className="text-left"
+              className="text-left w-full flex flex-col group cursor-pointer"
               onClick={() => {
                 setTheme(theme)
                 setOpen(false)

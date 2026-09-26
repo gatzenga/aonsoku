@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Check, Minus } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Theme } from '@/types/themeContext'
 
@@ -34,23 +34,19 @@ export function ThemeTitle({ isActive, theme }: ThemeTitleProps) {
   return (
     <span
       className={clsx(
-        'mt-2 flex items-center gap-1',
-        !isActive && 'text-muted-foreground/70',
+        'mt-2 flex items-center gap-1.5 h-5 text-xs font-medium',
+        isActive ? 'text-foreground' : 'text-muted-foreground/70',
       )}
     >
-      <Check
-        size={16}
-        strokeWidth={2}
-        className={clsx(!isActive && 'hidden')}
-        aria-hidden="true"
-      />
-      <Minus
-        size={16}
-        strokeWidth={2}
-        className={clsx(isActive && 'hidden')}
-        aria-hidden="true"
-      />
-      <span className="text-xs font-medium">{t(`theme.${theme}`)}</span>
+      {isActive && (
+        <Check
+          size={14}
+          strokeWidth={2}
+          className="shrink-0"
+          aria-hidden="true"
+        />
+      )}
+      <span className="truncate">{t(`theme.${theme}`)}</span>
     </span>
   )
 }
