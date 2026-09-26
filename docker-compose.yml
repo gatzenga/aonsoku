@@ -9,9 +9,9 @@ services:
       - NAVIDROME_URL=http://172.168.22.10:4533
       - LYRICS_SERVER=https://lrclib.vkugler.ch
       - LANGUAGE=de
-      - SIDEBAR_ARTISTS=true
-      - SIDEBAR_SONGS=true
       - SIDEBAR_ALBUMS=true
+      - SIDEBAR_SONGS=true
+      - SIDEBAR_ARTISTS=true
       - SIDEBAR_GENRES=true
       - SIDEBAR_RADIOS=true
       - FEATURE_FAVORITES=true

@@ -11,12 +11,11 @@ import { SidebarMainItem } from './main-item'
 
 export function NavLibrary() {
   const { t } = useTranslation()
-  const hideArtistsSection = useAppStore().pages.hideArtistsSection
-  const hideSongsSection = useAppStore().pages.hideSongsSection
   const hideAlbumsSection = useAppStore().pages.hideAlbumsSection
+  const hideSongsSection = useAppStore().pages.hideSongsSection
+  const hideArtistsSection = useAppStore().pages.hideArtistsSection
   const hideGenresSection = useAppStore().pages.hideGenresSection
   const hideFavoritesSection = useAppStore().pages.hideFavoritesSection
-  const hidePlaylistsSection = useAppStore().pages.hidePlaylistsSection
   const hideRadiosSection = useAppStore().pages.hideRadiosSection
 
   const isAllSectionsHidden = useAppStore().pages.isAllSectionsHidden()
@@ -29,14 +28,12 @@ export function NavLibrary() {
       <MainSidebarMenu>
         {libraryItems.map((item) => {
           // Settings to show/hide library sections
+          if (hideAlbumsSection && item.id === SidebarItems.Albums) return null
+          if (hideSongsSection && item.id === SidebarItems.Songs) return null
           if (hideArtistsSection && item.id === SidebarItems.Artists)
             return null
-          if (hideSongsSection && item.id === SidebarItems.Songs) return null
-          if (hideAlbumsSection && item.id === SidebarItems.Albums) return null
           if (hideGenresSection && item.id === SidebarItems.Genres) return null
           if (hideFavoritesSection && item.id === SidebarItems.Favorites)
-            return null
-          if (hidePlaylistsSection && item.id === SidebarItems.Playlists)
             return null
           if (hideRadiosSection && item.id === SidebarItems.Radios) return null
 

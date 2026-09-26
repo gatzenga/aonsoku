@@ -8,9 +8,9 @@ export interface ClientConfig {
   language: Language
   lyrics: boolean
   sidebar: {
-    artists: boolean
-    songs: boolean
     albums: boolean
+    songs: boolean
+    artists: boolean
     genres: boolean
     radios: boolean
   }
@@ -109,9 +109,9 @@ export function loadConfig(): ServerConfig {
       language: readLanguage('LANGUAGE', 'de'),
       lyrics: lyricsServer !== null,
       sidebar: {
-        artists: readBoolean('SIDEBAR_ARTISTS', true),
-        songs: readBoolean('SIDEBAR_SONGS', true),
         albums: readBoolean('SIDEBAR_ALBUMS', true),
+        songs: readBoolean('SIDEBAR_SONGS', true),
+        artists: readBoolean('SIDEBAR_ARTISTS', true),
         genres: readBoolean('SIDEBAR_GENRES', true),
         radios: readBoolean('SIDEBAR_RADIOS', true),
       },

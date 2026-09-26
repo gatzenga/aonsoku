@@ -8,9 +8,9 @@ export interface AppConfig {
   language: AppLanguage
   lyrics: boolean
   sidebar: {
-    artists: boolean
-    songs: boolean
     albums: boolean
+    songs: boolean
+    artists: boolean
     genres: boolean
     radios: boolean
   }
@@ -24,9 +24,9 @@ const defaultConfig: AppConfig = {
   language: 'de',
   lyrics: false,
   sidebar: {
-    artists: true,
-    songs: true,
     albums: true,
+    songs: true,
+    artists: true,
     genres: true,
     radios: true,
   },
