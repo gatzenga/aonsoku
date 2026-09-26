@@ -22,9 +22,7 @@ export default function RelatedArtistsList({
   const [canScrollPrev, setCanScrollPrev] = useState<boolean>()
   const [canScrollNext, setCanScrollNext] = useState<boolean>()
 
-  if (similarArtists.length > 16) {
-    similarArtists = similarArtists.slice(0, 16)
-  }
+  const displayArtists = similarArtists.slice(0, 16)
 
   useEffect(() => {
     if (!api) {
@@ -39,6 +37,10 @@ export default function RelatedArtistsList({
       setCanScrollNext(api.canScrollNext())
     })
   }, [api])
+
+  if (displayArtists.length === 0) {
+    return null
+  }
 
   return (
     <div className="w-full flex flex-col mb-4">
@@ -69,7 +71,7 @@ export default function RelatedArtistsList({
           setApi={setApi}
         >
           <CarouselContent>
-            {similarArtists.map((artist) => (
+            {displayArtists.map((artist) => (
               <CarouselItem
                 key={artist.id}
                 className="shrink-0 basis-[148px] max-w-[148px]"

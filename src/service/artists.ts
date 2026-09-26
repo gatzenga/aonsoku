@@ -34,14 +34,25 @@ async function getOne(id: string) {
 }
 
 async function getInfo(id: string) {
-  const response = await httpClient<ArtistInfoResponse>('/getArtistInfo', {
+  const response = await httpClient<ArtistInfoResponse>('/getArtistInfo2', {
     method: 'GET',
     query: {
       id,
     },
   })
 
-  return response?.data.artistInfo
+  if (response?.data.artistInfo2 || response?.data.artistInfo) {
+    return response.data.artistInfo2 ?? response.data.artistInfo
+  }
+
+  const fallback = await httpClient<ArtistInfoResponse>('/getArtistInfo', {
+    method: 'GET',
+    query: {
+      id,
+    },
+  })
+
+  return fallback?.data.artistInfo
 }
 
 export const artists = {

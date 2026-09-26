@@ -22,7 +22,7 @@ export interface IArtist {
 export interface ISimilarArtist {
   id: string
   name: string
-  albumCount: number
+  albumCount?: number
   coverArt: string
   artistImageUrl: string
   starred?: string
@@ -41,7 +41,10 @@ export interface IArtistInfo {
 }
 
 export interface ArtistInfoResponse
-  extends SubsonicResponse<{ artistInfo: IArtistInfo }> {}
+  extends SubsonicResponse<{
+    artistInfo?: IArtistInfo
+    artistInfo2?: IArtistInfo
+  }> {}
 
 export interface ArtistSeparator {
   name: string

@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import ImageHeader from '@/app/components/album/image-header'
@@ -18,7 +20,9 @@ import {
 } from '@/app/hooks/use-artist'
 import ErrorPage from '@/app/pages/error-page'
 import { ROUTES } from '@/routes/routesList'
+import { subsonic } from '@/service/subsonic'
 import { sortRecentAlbums } from '@/utils/album'
+import { queryKeys } from '@/utils/queryKeys'
 
 export default function Artist() {
   const { t } = useTranslation()
@@ -34,6 +38,28 @@ export default function Artist() {
   const { data: topSongs, isLoading: topSongsIsLoading } = useGetTopSongs(
     artist?.name,
   )
+  const { data: allArtists } = useQuery({
+    queryKey: [queryKeys.artist.all],
+    queryFn: subsonic.artists.getAll,
+  })
+
+  const albumArtistIds = useMemo(() => {
+    if (!allArtists) return null
+    return new Set(allArtists.map((a) => a.id))
+  }, [allArtists])
+
+  const similarArtists = useMemo(() => {
+    if (!artistInfo?.similarArtist) return []
+    return artistInfo.similarArtist.filter((similar) => {
+      // Must be present in the user's library
+      if (!similar.id || similar.id === '-1') return false
+      // Must have albums (Navidrome getArtistInfo2 returns albumCount)
+      if (similar.albumCount !== undefined && similar.albumCount <= 0) return false
+      // Only keep verified album artists from the library
+      if (albumArtistIds && !albumArtistIds.has(similar.id)) return false
+      return true
+    })
+  }, [artistInfo?.similarArtist, albumArtistIds])
 
   if (artistIsLoading) return <AlbumFallback />
   if (isFetched && !artist) {
@@ -114,10 +140,10 @@ export default function Artist() {
         )}
 
         {artistInfoIsLoading && <PreviewListFallback cardWidth={132} />}
-        {artistInfo?.similarArtist && !artistInfoIsLoading && (
+        {similarArtists.length > 0 && !artistInfoIsLoading && (
           <RelatedArtistsList
             title={t('artist.relatedArtists')}
-            similarArtists={artistInfo.similarArtist}
+            similarArtists={similarArtists}
           />
         )}
       </ListWrapper>
